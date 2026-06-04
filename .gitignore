@@ -1,0 +1,12 @@
+.DS_Store
+.claude/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+.env
+.env.local
+.env.production
+*.egg-info/
+.venv/
+venv/
+node_modules/

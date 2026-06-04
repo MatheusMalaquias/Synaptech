@@ -28,9 +28,11 @@ if [ -d "/opt/erp" ]; then
   info "Repositório já existe, atualizando..."
   cd /opt/erp && git pull origin main
 else
-  git clone https://github.com/MatheusMalaquias/erp-flv.git /opt/erp
-  cd /opt/erp
+  git clone https://github.com/MatheusMalaquias/erp-flv.git /opt/erp-repo
+  # O código fica dentro da pasta erp/ no repositório
+  mv /opt/erp-repo/erp /opt/erp
 fi
+cd /opt/erp
 ok "Código clonado em /opt/erp"
 
 # ── 3. Cria o arquivo .env ────────────────────────────────────
