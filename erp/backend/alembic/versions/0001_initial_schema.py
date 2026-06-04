@@ -162,6 +162,8 @@ def upgrade() -> None:
     _x("CREATE INDEX IF NOT EXISTS idx_vendas_sessao ON vendas(sessao_caixa_id)")
     _x("CREATE INDEX IF NOT EXISTS idx_vendas_criado ON vendas(criado_em)")
     _x("CREATE INDEX IF NOT EXISTS idx_vendas_status ON vendas(status)")
+    # Sequence para número de venda — evita race condition em inserções paralelas
+    _x("CREATE SEQUENCE IF NOT EXISTS vendas_numero_seq START 1")
 
     _x("""CREATE TABLE IF NOT EXISTS itens_venda (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

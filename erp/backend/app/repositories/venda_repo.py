@@ -15,11 +15,11 @@ class VendaRepository:
         self.db = db
 
     async def proximo_numero(self, serie: str = "01") -> int:
-        """Gera o próximo número sequencial de venda para a série."""
-        result = await self.db.execute(
-            select(func.coalesce(func.max(Venda.numero), 0) + 1)
-            .where(Venda.serie == serie)
-        )
+        """
+        Gera o próximo número sequencial de venda usando PostgreSQL sequence.
+        Evita race condition quando múltiplas vendas são criadas simultaneamente.
+        """
+        result = await self.db.execute(text("SELECT nextval('vendas_numero_seq')"))
         return result.scalar_one()
 
     async def criar(self, venda: Venda) -> Venda:
