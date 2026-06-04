@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERP FLV — PDV</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 14px;
+  }
+
+  /* ── LOGIN ─────────────────────────────────────── */
+  #tela-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #1a1a2e;
+  }
+  .login-box {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 4px;
+    padding: 32px 40px;
+    width: 360px;
+    text-align: center;
+  }
+  .login-box h1 { font-size: 22px; color: #e94560; margin-bottom: 4px; letter-spacing: 2px; }
+  .login-box p  { color: #888; font-size: 11px; margin-bottom: 24px; }
+  .login-box input {
+    width: 100%; padding: 10px; margin-bottom: 12px;
+    background: #0f3460; border: 1px solid #e94560;
+    color: #fff; border-radius: 2px; font-family: inherit; font-size: 14px;
+  }
+  .btn-primary {
+    width: 100%; padding: 11px;
+    background: #e94560; color: #fff; border: none;
+    font-size: 14px; font-weight: bold; cursor: pointer;
+    font-family: inherit; letter-spacing: 1px; border-radius: 2px;
+  }
+  .btn-primary:hover { background: #c73652; }
+  .login-erro { color: #e94560; font-size: 12px; margin-top: 8px; min-height: 18px; }
+
+  /* ── LAYOUT PRINCIPAL ──────────────────────────── */
+  #tela-pdv { display: none; flex-direction: column; height: 100vh; }
+
+  /* Barra de topo */
+  .topbar {
+    background: #0f3460;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #e94560;
+    flex-shrink: 0;
+  }
+  .topbar-esq { display: flex; align-items: center; gap: 16px; }
+  .topbar-logo { color: #e94560; font-weight: bold; font-size: 16px; letter-spacing: 2px; }
+  .topbar-info { color: #aaa; font-size: 12px; }
+  .topbar-info span { color: #fff; font-weight: bold; }
+  .topbar-dir { display: flex; align-items: center; gap: 12px; }
+  .topbar-operador { color: #aaa; font-size: 12px; }
+  .btn-sair {
+    background: #e94560; color: #fff; border: none;
+    padding: 4px 12px; cursor: pointer; font-family: inherit;
+    font-size: 12px; border-radius: 2px;
+  }
+
+  /* Área central */
+  .pdv-body { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── COLUNA ESQUERDA: Carrinho ─────────────────── */
+  .col-carrinho {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #0f3460;
+  }
+
+  .carrinho-header {
+    background: #0f3460;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1a4a8a;
+    flex-shrink: 0;
+  }
+  .carrinho-header-titulo { color: #fff; font-weight: bold; font-size: 13px; }
+  .carrinho-header-serie { color: #aaa; font-size: 11px; }
+
+  /* Tabela de itens */
+  .tabela-wrap { flex: 1; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #16213e;
+    color: #aaa;
+    font-size: 11px;
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid #0f3460;
+    position: sticky; top: 0;
+  }
+  tbody tr { border-bottom: 1px solid #1a2a4a; }
+  tbody tr:hover { background: #1a2a4a; }
+  tbody td { padding: 7px 8px; font-size: 13px; }
+  td.num { text-align: right; }
+  td.seq { color: #888; font-size: 11px; }
+  .td-produto { color: #fff; font-weight: bold; }
+  .td-qtd { color: #66d9e8; }
+  .td-preco { color: #aaa; }
+  .td-total { color: #e94560; font-weight: bold; }
+  .btn-del {
+    background: #2a1a1a; color: #e94560; border: 1px solid #e94560;
+    cursor: pointer; padding: 2px 8px; font-size: 11px; border-radius: 2px;
+  }
+  .btn-del:hover { background: #e94560; color: #fff; }
+
+  /* Estado CAIXA LIVRE */
+  .caixa-livre {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .caixa-livre-titulo {
+    font-size: 48px;
+    font-weight: bold;
+    color: #0f3460;
+    letter-spacing: 8px;
+    text-shadow: 0 0 20px #0f3460;
+    animation: pisca 2s ease-in-out infinite;
+  }
+  @keyframes pisca { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .caixa-livre-sub { color: #555; font-size: 13px; margin-top: 4px; }
+  .atalhos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+    margin-top: 20px;
+    color: #444;
+    font-size: 12px;
+  }
+  .atalho-key { color: #e94560; font-weight: bold; }
+
+  /* Rodapé do carrinho */
+  .carrinho-footer {
+    background: #0f3460;
+    padding: 8px 12px;
+    border-top: 1px solid #1a4a8a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .total-label { color: #aaa; font-size: 13px; }
+  .total-valor { color: #e94560; font-size: 22px; font-weight: bold; }
+
+  /* ── COLUNA DIREITA: Ações ─────────────────────── */
+  .col-acoes {
+    width: 220px;
+    background: #16213e;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .acoes-titulo {
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #0f3460;
+  }
+
+  .btn-acao {
+    width: 100%; padding: 10px 8px;
+    background: #0f3460; color: #fff;
+    border: 1px solid #1a4a8a;
+    cursor: pointer; font-family: inherit; font-size: 13px;
+    text-align: left; border-radius: 2px;
+    display: flex; align-items: center; gap: 8px;
+    transition: background 0.15s;
+  }
+  .btn-acao:hover { background: #1a4a8a; }
+  .btn-acao.destaque { background: #e94560; border-color: #e94560; }
+  .btn-acao.destaque:hover { background: #c73652; }
+  .btn-acao.verde { background: #1a5c3a; border-color: #27ae60; }
+  .btn-acao.verde:hover { background: #27ae60; }
+  .btn-acao .tecla {
+    background: #fff3;
+    border-radius: 2px;
+    padding: 0 4px;
+    font-size: 11px;
+    color: #ccc;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .divisor { border-top: 1px solid #0f3460; margin: 4px 0; }
+
+  /* ── MODAL BASE ─────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.ativo { display: flex; }
+  .modal {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 4px;
+    min-width: 300px;
+    max-width: 95vw;
+  }
+  .modal-titulo {
+    background: #0f3460;
+    padding: 10px 16px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #1a4a8a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-fechar {
+    cursor: pointer; color: #e94560; font-size: 18px; line-height: 1;
+    background: none; border: none; color: #e94560;
+  }
+  .modal-body { padding: 16px; }
+
+  /* ── MODAL PRODUTOS ─────────────────────────────── */
+  #modal-produtos .modal { width: 860px; max-width: 95vw; }
+  .busca-produto {
+    width: 100%;
+    padding: 10px;
+    background: #0f3460;
+    border: 1px solid #e94560;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+  .tabela-produtos-wrap { max-height: 55vh; overflow-y: auto; }
+  .tabela-produtos tbody tr { cursor: pointer; }
+  .tabela-produtos tbody tr:hover { background: #0f3460 !important; }
+  .badge-kg  { color: #66d9e8; font-size: 11px; }
+  .badge-un  { color: #a8e6cf; font-size: 11px; }
+  .badge-t   { background: #1a5c3a; color: #27ae60; padding: 1px 5px; border-radius: 2px; font-size: 10px; }
+  .badge-f   { background: #2a1a1a; color: #888; padding: 1px 5px; border-radius: 2px; font-size: 10px; }
+  .estoque-neg { color: #e94560; }
+  .estoque-pos { color: #27ae60; }
+
+  /* ── MODAL QUANTIDADE ───────────────────────────── */
+  #modal-quantidade .modal { width: 320px; }
+  .qtd-produto-nome {
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .qtd-produto-preco {
+    text-align: center;
+    color: #e94560;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .qtd-input {
+    width: 100%;
+    padding: 14px;
+    background: #0f3460;
+    border: 2px solid #e94560;
+    color: #fff;
+    font-family: inherit;
+    font-size: 28px;
+    text-align: center;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+  .qtd-unidade { color: #888; font-size: 12px; text-align: center; margin-bottom: 12px; }
+  .qtd-preview {
+    text-align: center;
+    color: #aaa;
+    font-size: 13px;
+    margin-bottom: 16px;
+    min-height: 20px;
+  }
+  .qtd-preview span { color: #e94560; font-weight: bold; }
+
+  /* ── MODAL PAGAMENTO ─────────────────────────────── */
+  #modal-pagamento .modal { width: 400px; }
+  .pag-total {
+    text-align: center;
+    font-size: 32px;
+    color: #e94560;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  .pag-total-label { font-size: 12px; color: #888; margin-bottom: 4px; text-align: center; }
+  .formas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .btn-forma {
+    padding: 14px 8px;
+    background: #0f3460;
+    border: 1px solid #1a4a8a;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    border-radius: 2px;
+    text-align: center;
+    transition: background 0.15s;
+  }
+  .btn-forma:hover  { background: #1a4a8a; }
+  .btn-forma.ativo  { background: #e94560; border-color: #e94560; font-weight: bold; }
+  .btn-forma .icone { font-size: 20px; display: block; margin-bottom: 4px; }
+  .pag-valor-input {
+    width: 100%;
+    padding: 10px;
+    background: #0f3460;
+    border: 1px solid #e94560;
+    color: #fff;
+    font-family: inherit;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  .pag-troco {
+    text-align: center;
+    color: #27ae60;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    min-height: 20px;
+  }
+
+  /* ── MODAL SUCESSO ───────────────────────────────── */
+  #modal-sucesso .modal { width: 360px; text-align: center; }
+  .sucesso-icon { font-size: 56px; margin-bottom: 12px; }
+  .sucesso-venda { color: #27ae60; font-size: 18px; font-weight: bold; margin-bottom: 8px; }
+  .sucesso-total { color: #e94560; font-size: 28px; font-weight: bold; margin-bottom: 4px; }
+  .sucesso-forma { color: #aaa; font-size: 13px; margin-bottom: 20px; }
+  .sucesso-troco { color: #27ae60; font-size: 16px; font-weight: bold; margin-bottom: 20px; }
+
+  /* ── ABRIR CAIXA ─────────────────────────────────── */
+  #modal-caixa .modal { width: 380px; }
+
+  /* ── NOTIFICAÇÃO ─────────────────────────────────── */
+  #notif {
+    position: fixed;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #0f3460;
+    border: 1px solid #e94560;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  #notif.visivel { opacity: 1; }
+  #notif.erro { border-color: #e94560; background: #3a1a1a; }
+  #notif.ok   { border-color: #27ae60; background: #1a3a2a; }
+
+  /* ── SCROLLBAR ───────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #16213e; }
+  ::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 3px; }
+
+  /* ── STATUS BAR ──────────────────────────────────── */
+  .statusbar {
+    background: #0a0a1a;
+    padding: 3px 12px;
+    display: flex;
+    justify-content: space-between;
+    color: #555;
+    font-size: 11px;
+    flex-shrink: 0;
+    border-top: 1px solid #0f3460;
+  }
+  .statusbar span { color: #888; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  TELA DE LOGIN                                   -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tela-login">
+  <div class="login-box">
+    <h1>ERP FLV</h1>
+    <p>Sistema de Ponto de Venda</p>
+    <input type="email" id="login-email" placeholder="Email" value="admin@loja.com">
+    <input type="password" id="login-senha" placeholder="Senha" value="admin123">
+    <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
+    <div class="login-erro" id="login-erro"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  TELA PRINCIPAL PDV                              -->
+<!-- ════════════════════════════════════════════════ -->
+<div id="tela-pdv">
+  <!-- Barra de topo -->
+  <div class="topbar">
+    <div class="topbar-esq">
+      <div class="topbar-logo">PDV FLV</div>
+      <div class="topbar-info">Série: <span>01</span></div>
+      <div class="topbar-info">Venda: <span id="venda-numero">—</span></div>
+      <div class="topbar-info">Itens: <span id="venda-itens">0</span></div>
+    </div>
+    <div class="topbar-dir">
+      <div class="topbar-operador" id="operador-nome"></div>
+      <button class="btn-sair" onclick="sair()">SAIR</button>
+    </div>
+  </div>
+
+  <!-- Corpo -->
+  <div class="pdv-body">
+
+    <!-- Coluna esquerda: carrinho -->
+    <div class="col-carrinho">
+      <div class="carrinho-header">
+        <div class="carrinho-header-titulo">ITENS DA VENDA</div>
+        <div class="carrinho-header-serie" id="sessao-info">Sem sessão</div>
+      </div>
+
+      <div class="tabela-wrap" id="area-itens">
+        <!-- Estado CAIXA LIVRE (sem venda ativa) -->
+        <div class="caixa-livre" id="estado-livre">
+          <div class="caixa-livre-titulo">CAIXA LIVRE</div>
+          <div class="caixa-livre-sub">Aguardando próxima venda</div>
+          <div class="atalhos-grid">
+            <div><span class="atalho-key">F7</span> Pesquisa Produto</div>
+            <div><span class="atalho-key">F5</span> Pagamento Dinheiro</div>
+            <div><span class="atalho-key">X</span> PIX Dinâmico</div>
+            <div><span class="atalho-key">F9</span> Cancelar Item</div>
+            <div><span class="atalho-key">F10</span> Cancelar Venda</div>
+            <div><span class="atalho-key">ESC</span> Fechar Modal</div>
+          </div>
+        </div>
+
+        <!-- Tabela de itens (aparece quando há venda) -->
+        <table id="tabela-itens" style="display:none">
+          <thead>
+            <tr>
+              <th style="width:40px">Seq</th>
+              <th>Descrição</th>
+              <th style="width:80px">Un</th>
+              <th style="width:90px;text-align:right">Qtd</th>
+              <th style="width:90px;text-align:right">Preço</th>
+              <th style="width:90px;text-align:right">Subtotal</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-itens"></tbody>
+        </table>
+      </div>
+
+      <div class="carrinho-footer">
+        <div class="total-label">TOTAL DA VENDA</div>
+        <div class="total-valor" id="total-valor">R$ 0,00</div>
+      </div>
+    </div>
+
+    <!-- Coluna direita: ações -->
+    <div class="col-acoes">
+      <div class="acoes-titulo">AÇÕES</div>
+
+      <button class="btn-acao destaque" onclick="abrirBuscaProduto()">
+        <span class="tecla">F7</span> Pesquisar Produto
+      </button>
+
+      <div class="divisor"></div>
+      <div class="acoes-titulo">PAGAMENTO</div>
+
+      <button class="btn-acao verde" onclick="iniciarPagamento('pix')">
+        <span class="tecla">X</span> PIX Dinâmico
+      </button>
+      <button class="btn-acao" onclick="iniciarPagamento('dinheiro')">
+        <span class="tecla">F5</span> Dinheiro
+      </button>
+      <button class="btn-acao" onclick="iniciarPagamento('debito')">
+        <span class="tecla">E</span> Cartão Débito
+      </button>
+      <button class="btn-acao" onclick="iniciarPagamento('credito')">
+        <span class="tecla">D</span> Cartão Crédito
+      </button>
+
+      <div class="divisor"></div>
+      <div class="acoes-titulo">VENDA</div>
+
+      <button class="btn-acao" onclick="cancelarUltimoItem()">
+        <span class="tecla">F9</span> Cancelar Item
+      </button>
+      <button class="btn-acao" onclick="cancelarVenda()" style="color:#e94560">
+        <span class="tecla">F10</span> Cancelar Venda
+      </button>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div>ERP FLV v0.2 — PDV</div>
+    <div id="status-bar">Pronto</div>
+    <div id="relogio"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: ABRIR CAIXA                              -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-caixa">
+  <div class="modal">
+    <div class="modal-titulo">ABRIR CAIXA</div>
+    <div class="modal-body">
+      <p style="color:#aaa;font-size:13px;margin-bottom:16px">
+        Nenhuma sessão de caixa aberta.<br>Informe o valor de abertura para começar.
+      </p>
+      <label style="color:#888;font-size:12px">Caixa</label>
+      <select id="select-caixa" style="width:100%;padding:8px;background:#0f3460;border:1px solid #1a4a8a;color:#fff;font-family:inherit;margin-bottom:12px;border-radius:2px;">
+        <option value="">Carregando...</option>
+      </select>
+      <label style="color:#888;font-size:12px">Valor de Abertura (R$)</label>
+      <input type="number" id="val-abertura" value="0.00" step="0.01" min="0"
+        style="width:100%;padding:10px;background:#0f3460;border:1px solid #e94560;color:#fff;font-family:inherit;font-size:18px;text-align:center;margin-top:4px;margin-bottom:16px;border-radius:2px;">
+      <button class="btn-primary" onclick="abrirCaixa()">ABRIR CAIXA E INICIAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: PESQUISA DE PRODUTO                      -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-produtos">
+  <div class="modal">
+    <div class="modal-titulo">
+      PESQUISA DE PRODUTOS — F7
+      <button class="modal-fechar" onclick="fecharModal('modal-produtos')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" class="busca-produto" id="busca-input"
+        placeholder="Digite o nome do produto..." oninput="buscarProdutos(this.value)">
+      <div class="tabela-produtos-wrap">
+        <table class="tabela-produtos">
+          <thead>
+            <tr>
+              <th style="width:40px">ID</th>
+              <th>Descrição</th>
+              <th style="width:50px">Un</th>
+              <th style="width:90px;text-align:right">Preço</th>
+              <th style="width:60px;text-align:center">Trib</th>
+              <th style="width:90px;text-align:right">Estoque</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-produtos"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: QUANTIDADE                               -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-quantidade">
+  <div class="modal">
+    <div class="modal-titulo">
+      QUANTIDADE
+      <button class="modal-fechar" onclick="fecharModal('modal-quantidade')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="qtd-produto-nome" id="qtd-nome"></div>
+      <div class="qtd-produto-preco" id="qtd-preco"></div>
+      <input type="number" class="qtd-input" id="qtd-input"
+        step="0.001" min="0.001" placeholder="0.000"
+        oninput="atualizarPreview()" onkeydown="qtdKeydown(event)">
+      <div class="qtd-unidade" id="qtd-unidade"></div>
+      <div class="qtd-preview" id="qtd-preview"></div>
+      <button class="btn-primary" onclick="confirmarQuantidade()">CONFIRMAR — ENTER</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: PAGAMENTO                                -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-pagamento">
+  <div class="modal">
+    <div class="modal-titulo">
+      PAGAMENTO
+      <button class="modal-fechar" onclick="fecharModal('modal-pagamento')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="pag-total-label">TOTAL A PAGAR</div>
+      <div class="pag-total" id="pag-total"></div>
+
+      <div class="formas-grid">
+        <button class="btn-forma" id="btn-pix"      onclick="selecionarForma('pix')">
+          <span class="icone">📱</span>PIX
+        </button>
+        <button class="btn-forma" id="btn-dinheiro" onclick="selecionarForma('dinheiro')">
+          <span class="icone">💵</span>Dinheiro
+        </button>
+        <button class="btn-forma" id="btn-debito"   onclick="selecionarForma('debito')">
+          <span class="icone">💳</span>Débito
+        </button>
+        <button class="btn-forma" id="btn-credito"  onclick="selecionarForma('credito')">
+          <span class="icone">💳</span>Crédito
+        </button>
+      </div>
+
+      <input type="number" class="pag-valor-input" id="pag-valor"
+        placeholder="Valor recebido" step="0.01"
+        oninput="calcularTroco()">
+      <div class="pag-troco" id="pag-troco"></div>
+
+      <button class="btn-primary" onclick="finalizarVenda()">✓ FINALIZAR VENDA</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: VENDA FINALIZADA                         -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-sucesso">
+  <div class="modal">
+    <div class="modal-titulo">VENDA FINALIZADA</div>
+    <div class="modal-body">
+      <div class="sucesso-icon">✅</div>
+      <div class="sucesso-venda" id="suc-venda"></div>
+      <div class="sucesso-total" id="suc-total"></div>
+      <div class="sucesso-forma" id="suc-forma"></div>
+      <div class="sucesso-troco" id="suc-troco"></div>
+      <button class="btn-primary" onclick="novaVenda()">NOVA VENDA — ENTER</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notificação -->
+<div id="notif"></div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  JAVASCRIPT                                      -->
+<!-- ════════════════════════════════════════════════ -->
+<script>
+const API = '/api/v1';
+let token = localStorage.getItem('erp_token') || '';
+let usuario = JSON.parse(localStorage.getItem('erp_usuario') || 'null');
+let vendaAtual = null;      // {id, numero, itens[], total_final}
+let sessaoId = null;
+let produtoSelecionado = null;
+let formaPagamento = null;
+let buscaTimer = null;
+
+// ── API helpers ─────────────────────────────────────────────
+async function api(method, path, body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (r.status === 401) { sair(); return null; }
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail || 'Erro desconhecido');
+  return data;
+}
+
+function fmtBRL(v) {
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtQtd(v, un) {
+  return un === 'KG'
+    ? Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' KG'
+    : Number(v).toFixed(0) + ' UN';
+}
+
+// ── Notificação ─────────────────────────────────────────────
+function notif(msg, tipo = 'ok', ms = 3000) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = `visivel ${tipo}`;
+  clearTimeout(notif._t);
+  notif._t = setTimeout(() => el.className = '', ms);
+}
+function setStatus(msg) { document.getElementById('status-bar').textContent = msg; }
+
+// ── Modais ──────────────────────────────────────────────────
+function abrirModal(id) { document.getElementById(id).classList.add('ativo'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('ativo'); }
+
+// ── RELÓGIO ─────────────────────────────────────────────────
+function atualizarRelogio() {
+  const now = new Date();
+  document.getElementById('relogio').textContent =
+    now.toLocaleTimeString('pt-BR');
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+
+// ── LOGIN ────────────────────────────────────────────────────
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  document.getElementById('login-erro').textContent = '';
+  try {
+    const r = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || 'Credenciais inválidas');
+    token = data.access_token;
+    usuario = data.usuario;
+    localStorage.setItem('erp_token', token);
+    localStorage.setItem('erp_usuario', JSON.stringify(usuario));
+    entrarNoPDV();
+  } catch(e) {
+    document.getElementById('login-erro').textContent = e.message;
+  }
+}
+
+// ── ENTRAR NO PDV ────────────────────────────────────────────
+async function entrarNoPDV() {
+  document.getElementById('tela-login').style.display = 'none';
+  document.getElementById('tela-pdv').style.display = 'flex';
+  document.getElementById('operador-nome').textContent = '👤 ' + (usuario?.nome || '');
+  await verificarSessao();
+}
+
+async function verificarSessao() {
+  try {
+    const s = await api('GET', '/caixa/sessao-atual');
+    if (s) {
+      sessaoId = s.id;
+      document.getElementById('sessao-info').textContent = 'Sessão: ' + s.id.substring(0,8) + '...';
+      setStatus('Caixa aberto — pronto para vender');
+    }
+  } catch(e) {
+    // Sem sessão — mostra modal de abertura
+    await carregarCaixas();
+    abrirModal('modal-caixa');
+  }
+}
+
+async function carregarCaixas() {
+  try {
+    const caixas = await api('GET', '/caixa/listar');
+    const sel = document.getElementById('select-caixa');
+    if (!caixas || caixas.length === 0) {
+      // Cria caixa padrão automaticamente
+      const novo = await api('POST', '/caixa/criar?nome=Caixa+01&serie_nfce=01');
+      sel.innerHTML = `<option value="${novo.id}">Caixa 01</option>`;
+    } else {
+      sel.innerHTML = caixas.map(c =>
+        `<option value="${c.id}">${c.nome} (Série ${c.serie_nfce})</option>`
+      ).join('');
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+async function abrirCaixa() {
+  const caixaId = document.getElementById('select-caixa').value;
+  const valorAbertura = document.getElementById('val-abertura').value || '0';
+  try {
+    const s = await api('POST', '/caixa/abrir', {
+      caixa_id: caixaId,
+      valor_abertura: parseFloat(valorAbertura)
+    });
+    sessaoId = s.id;
+    document.getElementById('sessao-info').textContent = 'Sessão: ' + s.id.substring(0,8) + '...';
+    fecharModal('modal-caixa');
+    notif('✓ Caixa aberto com sucesso!', 'ok');
+    setStatus('Caixa aberto — pronto para vender');
+  } catch(e) {
+    notif('Erro ao abrir caixa: ' + e.message, 'erro');
+  }
+}
+
+// ── BUSCA DE PRODUTO ─────────────────────────────────────────
+function abrirBuscaProduto() {
+  if (!sessaoId) { notif('Abra o caixa primeiro', 'erro'); return; }
+  abrirModal('modal-produtos');
+  const inp = document.getElementById('busca-input');
+  inp.value = '';
+  inp.focus();
+  buscarProdutos('');
+}
+
+async function buscarProdutos(q) {
+  clearTimeout(buscaTimer);
+  buscaTimer = setTimeout(async () => {
+    try {
+      const url = q ? `/produtos?busca=${encodeURIComponent(q)}&limit=50` : '/produtos?limit=50';
+      const data = await api('GET', url);
+      const items = data?.items || [];
+      const tbody = document.getElementById('tbody-produtos');
+      tbody.innerHTML = items.map(p => `
+        <tr onclick="selecionarProduto(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+          <td class="seq">${p.id}</td>
+          <td class="td-produto">${p.descricao}</td>
+          <td><span class="badge-${p.unidade.toLowerCase()}">${p.unidade}</span></td>
+          <td class="num">${fmtBRL(p.preco_venda)}</td>
+          <td style="text-align:center">
+            <span class="${p.tributado ? 'badge-t' : 'badge-f'}">${p.tributado ? 'T 18%' : 'F'}</span>
+          </td>
+          <td class="num ${Number(p.estoque) < 0 ? 'estoque-neg' : 'estoque-pos'}">
+            ${p.estoque !== null ? fmtQtd(p.estoque, p.unidade) : '—'}
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6" style="text-align:center;color:#555;padding:20px">Nenhum produto encontrado</td></tr>';
+    } catch(e) {
+      console.error(e);
+    }
+  }, 250);
+}
+
+function selecionarProduto(p) {
+  produtoSelecionado = p;
+  fecharModal('modal-produtos');
+
+  document.getElementById('qtd-nome').textContent = p.descricao;
+  document.getElementById('qtd-preco').textContent = fmtBRL(p.preco_venda) + ' / ' + p.unidade;
+  document.getElementById('qtd-unidade').textContent =
+    p.unidade === 'KG' ? 'Informe o peso em kg (ex: 2.750)' : 'Informe a quantidade inteira';
+
+  const inp = document.getElementById('qtd-input');
+  inp.value = '';
+  inp.step = p.unidade === 'KG' ? '0.001' : '1';
+  inp.min  = p.unidade === 'KG' ? '0.001' : '1';
+  document.getElementById('qtd-preview').innerHTML = '';
+
+  abrirModal('modal-quantidade');
+  setTimeout(() => inp.focus(), 100);
+}
+
+function atualizarPreview() {
+  const q = parseFloat(document.getElementById('qtd-input').value) || 0;
+  const p = produtoSelecionado;
+  if (!p || q <= 0) { document.getElementById('qtd-preview').innerHTML = ''; return; }
+  const sub = (Math.round(q * parseFloat(p.preco_venda) * 100) / 100).toFixed(2);
+  document.getElementById('qtd-preview').innerHTML =
+    `${fmtQtd(q, p.unidade)} × ${fmtBRL(p.preco_venda)} = <span>${fmtBRL(sub)}</span>`;
+}
+
+function qtdKeydown(e) {
+  if (e.key === 'Enter') confirmarQuantidade();
+  if (e.key === 'Escape') fecharModal('modal-quantidade');
+}
+
+async function confirmarQuantidade() {
+  const q = parseFloat(document.getElementById('qtd-input').value);
+  if (!q || q <= 0) { notif('Informe uma quantidade válida', 'erro'); return; }
+
+  try {
+    // Cria venda se não existir
+    if (!vendaAtual) {
+      vendaAtual = await api('POST', '/vendas');
+      document.getElementById('venda-numero').textContent = vendaAtual.numero;
+    }
+
+    // Adiciona item
+    const item = await api('POST', `/vendas/${vendaAtual.id}/item`, {
+      produto_id: produtoSelecionado.id,
+      quantidade: q
+    });
+
+    fecharModal('modal-quantidade');
+    await recarregarVenda();
+    notif(`✓ ${produtoSelecionado.descricao} adicionado`, 'ok');
+  } catch(e) {
+    notif('Erro: ' + e.message, 'erro');
+  }
+}
+
+// ── CARRINHO ─────────────────────────────────────────────────
+async function recarregarVenda() {
+  if (!vendaAtual) return;
+  const v = await api('GET', `/vendas/${vendaAtual.id}`);
+  vendaAtual = v;
+
+  const itens = v.itens || [];
+  document.getElementById('venda-itens').textContent = itens.length;
+
+  const libre = document.getElementById('estado-livre');
+  const tabela = document.getElementById('tabela-itens');
+
+  if (itens.length === 0) {
+    libre.style.display = 'flex';
+    tabela.style.display = 'none';
+    document.getElementById('total-valor').textContent = 'R$ 0,00';
+  } else {
+    libre.style.display = 'none';
+    tabela.style.display = 'table';
+    document.getElementById('tbody-itens').innerHTML = itens.map(it => `
+      <tr>
+        <td class="seq">${String(it.sequencia).padStart(3,'0')}</td>
+        <td class="td-produto">${it.descricao || '—'}</td>
+        <td class="td-qtd">${fmtQtd(it.quantidade, it.unidade)}</td>
+        <td class="td-preco num">${fmtBRL(it.preco_unitario)}</td>
+        <td class="td-total num">${fmtBRL(it.subtotal)}</td>
+        <td><button class="btn-del" onclick="removerItem('${it.id}')">✕</button></td>
+      </tr>
+    `).join('');
+    document.getElementById('total-valor').textContent = fmtBRL(v.total_final);
+  }
+}
+
+async function removerItem(itemId) {
+  if (!vendaAtual) return;
+  try {
+    await api('DELETE', `/vendas/${vendaAtual.id}/item/${itemId}`);
+    await recarregarVenda();
+    notif('Item removido', 'ok');
+  } catch(e) {
+    notif('Erro: ' + e.message, 'erro');
+  }
+}
+
+async function cancelarUltimoItem() {
+  if (!vendaAtual || !vendaAtual.itens?.length) return;
+  const ultimo = vendaAtual.itens[vendaAtual.itens.length - 1];
+  await removerItem(ultimo.id);
+}
+
+async function cancelarVenda() {
+  if (!vendaAtual) return;
+  if (!confirm('Cancelar a venda atual?')) return;
+  try {
+    await api('POST', `/vendas/${vendaAtual.id}/cancelar`, { motivo: 'Cancelado pelo operador' });
+    vendaAtual = null;
+    document.getElementById('venda-numero').textContent = '—';
+    document.getElementById('venda-itens').textContent = '0';
+    document.getElementById('estado-livre').style.display = 'flex';
+    document.getElementById('tabela-itens').style.display = 'none';
+    document.getElementById('total-valor').textContent = 'R$ 0,00';
+    notif('Venda cancelada', 'ok');
+  } catch(e) {
+    notif('Erro: ' + e.message, 'erro');
+  }
+}
+
+// ── PAGAMENTO ─────────────────────────────────────────────────
+function iniciarPagamento(forma) {
+  if (!vendaAtual || !vendaAtual.itens?.length) {
+    notif('Adicione itens antes de pagar', 'erro');
+    return;
+  }
+  formaPagamento = forma;
+  document.getElementById('pag-total').textContent = fmtBRL(vendaAtual.total_final);
+
+  ['pix','dinheiro','debito','credito'].forEach(f => {
+    document.getElementById('btn-' + f)?.classList.remove('ativo');
+  });
+  document.getElementById('btn-' + forma)?.classList.add('ativo');
+
+  const inp = document.getElementById('pag-valor');
+  inp.value = Number(vendaAtual.total_final).toFixed(2);
+  calcularTroco();
+
+  abrirModal('modal-pagamento');
+  setTimeout(() => inp.select(), 100);
+}
+
+function selecionarForma(forma) {
+  formaPagamento = forma;
+  ['pix','dinheiro','debito','credito'].forEach(f => {
+    document.getElementById('btn-' + f)?.classList.remove('ativo');
+  });
+  document.getElementById('btn-' + forma)?.classList.add('ativo');
+}
+
+function calcularTroco() {
+  const recebido = parseFloat(document.getElementById('pag-valor').value) || 0;
+  const total = parseFloat(vendaAtual?.total_final || 0);
+  const troco = recebido - total;
+  const el = document.getElementById('pag-troco');
+  if (troco > 0 && formaPagamento === 'dinheiro') {
+    el.textContent = 'Troco: ' + fmtBRL(troco);
+  } else {
+    el.textContent = '';
+  }
+}
+
+async function finalizarVenda() {
+  if (!formaPagamento) { notif('Selecione a forma de pagamento', 'erro'); return; }
+  const valor = parseFloat(document.getElementById('pag-valor').value);
+  if (!valor || valor <= 0) { notif('Informe o valor do pagamento', 'erro'); return; }
+
+  try {
+    const r = await api('POST', `/vendas/${vendaAtual.id}/finalizar`, {
+      pagamentos: [{ forma: formaPagamento, valor }]
+    });
+
+    fecharModal('modal-pagamento');
+
+    // Mostra tela de sucesso
+    const troco = Math.max(0, valor - parseFloat(r.total_final));
+    const nomes = { pix: 'PIX', dinheiro: 'Dinheiro', debito: 'Cartão Débito', credito: 'Cartão Crédito' };
+    document.getElementById('suc-venda').textContent = `Venda #${r.numero} finalizada!`;
+    document.getElementById('suc-total').textContent = fmtBRL(r.total_final);
+    document.getElementById('suc-forma').textContent = nomes[formaPagamento] || formaPagamento;
+    document.getElementById('suc-troco').textContent = troco > 0.001 ? 'Troco: ' + fmtBRL(troco) : '';
+    abrirModal('modal-sucesso');
+
+    vendaAtual = null;
+  } catch(e) {
+    notif('Erro ao finalizar: ' + e.message, 'erro');
+  }
+}
+
+function novaVenda() {
+  fecharModal('modal-sucesso');
+  document.getElementById('venda-numero').textContent = '—';
+  document.getElementById('venda-itens').textContent = '0';
+  document.getElementById('estado-livre').style.display = 'flex';
+  document.getElementById('tabela-itens').style.display = 'none';
+  document.getElementById('total-valor').textContent = 'R$ 0,00';
+  setStatus('Caixa aberto — pronto para vender');
+}
+
+// ── SAIR ─────────────────────────────────────────────────────
+function sair() {
+  localStorage.removeItem('erp_token');
+  localStorage.removeItem('erp_usuario');
+  token = ''; usuario = null; vendaAtual = null; sessaoId = null;
+  document.getElementById('tela-pdv').style.display = 'none';
+  document.getElementById('tela-login').style.display = 'flex';
+}
+
+// ── TECLADO GLOBAL ────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (document.getElementById('tela-login').style.display !== 'none') {
+    if (e.key === 'Enter') fazerLogin();
+    return;
+  }
+  // Modais abertos ignoram atalhos globais
+  const modalAberto = document.querySelector('.modal-overlay.ativo');
+  if (modalAberto) {
+    if (e.key === 'Escape') { modalAberto.classList.remove('ativo'); e.preventDefault(); }
+    if (e.key === 'Enter' && modalAberto.id === 'modal-sucesso') novaVenda();
+    return;
+  }
+  if (e.key === 'F7')  { e.preventDefault(); abrirBuscaProduto(); }
+  if (e.key === 'F5')  { e.preventDefault(); iniciarPagamento('dinheiro'); }
+  if (e.key === 'F9')  { e.preventDefault(); cancelarUltimoItem(); }
+  if (e.key === 'F10') { e.preventDefault(); cancelarVenda(); }
+  if (e.key.toLowerCase() === 'x' && !e.ctrlKey) iniciarPagamento('pix');
+  if (e.key.toLowerCase() === 'e' && !e.ctrlKey) iniciarPagamento('debito');
+  if (e.key.toLowerCase() === 'd' && !e.ctrlKey) iniciarPagamento('credito');
+});
+
+// ── INICIALIZAÇÃO ─────────────────────────────────────────────
+(async () => {
+  if (token && usuario) {
+    await entrarNoPDV();
+  }
+})();
+</script>
+</body>
+</html>

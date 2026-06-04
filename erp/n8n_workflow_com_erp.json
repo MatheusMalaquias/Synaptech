@@ -1,0 +1,298 @@
+{
+  "name": "ERP FLV — Importação de Vendas",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-1088, 512],
+      "id": "dfbd2597-0274-4e92-bdb3-cdd0b4439629",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1onE1KmHgDPNkjiYQTh8bCxs0BNdtZgz3UJOC_kTDJwY/edit?usp=sharing"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [-864, 400],
+      "id": "75dd4e31-5b35-496c-8eb1-1a62bc833228",
+      "name": "Notas",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PSUQw7PEvplCUXSI",
+          "name": "Malaquias"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1NcftknURxseLfYPrmUYzBcipUCy3DC3gdOd0fbAXuFE/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [-864, 592],
+      "id": "5c87f202-4791-4fd0-bca2-b5b941700258",
+      "name": "Produtos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PSUQw7PEvplCUXSI",
+          "name": "Malaquias"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "246d7697-cc92-49ee-bc82-94f88340e454",
+              "name": "Forma de pagamento",
+              "value": "={{ $json['Forma de pagamento'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ff8b11fa-32a7-4340-825e-663541d7af44",
+              "name": "Valor bruto",
+              "value": "={{ $json['Valor bruto'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-640, 400],
+      "id": "19e8463c-0b35-44e8-9c0d-74160738d17d",
+      "name": "Get notas"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5440c7b-4972-40ed-a140-017e47991995",
+              "name": "Produto",
+              "value": "={{ $json.Produto }}",
+              "type": "string"
+            },
+            {
+              "id": "27bafb77-bad9-414e-acfa-341821258434",
+              "name": "Preço",
+              "value": "={{ $json['Preço'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-640, 592],
+      "id": "a6a9431b-78e6-4f50-8677-ce1dc923cec3",
+      "name": "Get produtos"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [-416, 496],
+      "id": "eed20337-33ef-4139-886f-cf125c3f792a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const parseBR = (v) => Number(String(v || 0).replace(/\\./g, '').replace(',', '.'));\n\nconst produtos = $(\"Get produtos\").all().map(item => item.json);\nconst notas = $input.all();\n\nreturn notas.map(item => {\n  const nota = item.json;\n  const valorBruto = parseBR(nota[\"Valor bruto\"]);\n\n  const candidatos = produtos.filter(p => {\n    const preco = parseBR(p[\"Preço\"]);\n    return preco > 0 && preco <= valorBruto;\n  });\n\n  const sorteado = candidatos.length\n    ? candidatos[Math.floor(Math.random() * candidatos.length)]\n    : { Produto: \"VALOR MUITO BAIXO\", Preço: 0.01 };\n\n  const precoUnit = parseBR(sorteado[\"Preço\"]);\n\n  return {\n    json: {\n      Produto: sorteado[\"Produto\"],\n      Preco_Unit: precoUnit,\n      Quantidade: precoUnit > 0 ? Number((valorBruto / precoUnit).toFixed(3)) : 0,\n      Valor_Total: valorBruto,\n      Forma_Pagamento: nota[\"Forma de pagamento\"] || \"Pix\",\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-208, 496],
+      "id": "8a8bec21-b41c-432a-9a94-12be744165b2",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [32, 496],
+      "id": "929309e5-2820-473b-85d1-d989f15bbe2c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70aefe2f-c62b-446a-b827-9d6fbdcfc005",
+              "name": "Produto",
+              "value": "={{ $json.Produto }}",
+              "type": "string"
+            },
+            {
+              "id": "1ab11789-6649-4a8b-9b34-f5bde165eabd",
+              "name": "Preco_Unit",
+              "value": "={{ $json.Preco_Unit }}",
+              "type": "number"
+            },
+            {
+              "id": "36889394-4bb0-40f2-8648-fdb731a390d5",
+              "name": "Quantidade",
+              "value": "={{ $json.Quantidade }}",
+              "type": "number"
+            },
+            {
+              "id": "3a5e8d3b-f672-4320-b850-9dfb46e0b67d",
+              "name": "Valor_Total",
+              "value": "={{ $json.Valor_Total }}",
+              "type": "number"
+            },
+            {
+              "id": "50b79139-26f7-4e44-bff3-91335af6fcf9",
+              "name": "Forma_Pagamento",
+              "value": "={{ $json.Forma_Pagamento }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [256, 352],
+      "id": "3f2a2da1-4250-4b63-a7d8-e8644425a0d4",
+      "name": "Final"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://COLOQUE_SUA_URL_AQUI/api/v1/n8n/registrar-venda",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-Secret",
+              "value": "6b478c5a4e86ad292264e6357178ee3521cbda67b0a4e028"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"Produto\": \"{{ $json.Produto }}\",\n  \"Preco_Unit\": {{ $json.Preco_Unit }},\n  \"Quantidade\": {{ $json.Quantidade }},\n  \"Valor_Total\": {{ $json.Valor_Total }},\n  \"Forma_Pagamento\": \"{{ $json.Forma_Pagamento }}\"\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 352],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Registrar no ERP"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log do resultado de cada venda registrada\nconst resultado = $input.first().json;\n\nif (resultado.sucesso) {\n  console.log(`✅ Venda #${resultado.numero} registrada: ${resultado.produto} | Qtd: ${resultado.quantidade} | Total: R$ ${resultado.total_final} | Forma: ${resultado.forma_pagamento}`);\n} else {\n  console.error(`❌ Falha ao registrar venda: ${JSON.stringify(resultado)}`);\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [704, 352],
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Log Resultado"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [256, 592],
+      "id": "11bbaf1b-6abc-4e32-af0f-38db7eebecc2",
+      "name": "Wait",
+      "webhookId": "b458bf8f-62fc-425f-b46a-64ef2a9cec17"
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {"node": "Notas",    "type": "main", "index": 0},
+          {"node": "Produtos", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Notas": {
+      "main": [[{"node": "Get notas",    "type": "main", "index": 0}]]
+    },
+    "Produtos": {
+      "main": [[{"node": "Get produtos", "type": "main", "index": 0}]]
+    },
+    "Get notas": {
+      "main": [[{"node": "Merge", "type": "main", "index": 0}]]
+    },
+    "Get produtos": {
+      "main": [[{"node": "Merge", "type": "main", "index": 1}]]
+    },
+    "Merge": {
+      "main": [[{"node": "Code in JavaScript", "type": "main", "index": 0}]]
+    },
+    "Code in JavaScript": {
+      "main": [[{"node": "Loop Over Items", "type": "main", "index": 0}]]
+    },
+    "Loop Over Items": {
+      "main": [
+        [{"node": "Final", "type": "main", "index": 0}],
+        [{"node": "Wait",  "type": "main", "index": 0}]
+      ]
+    },
+    "Final": {
+      "main": [[{"node": "Registrar no ERP", "type": "main", "index": 0}]]
+    },
+    "Registrar no ERP": {
+      "main": [[{"node": "Log Resultado", "type": "main", "index": 0}]]
+    },
+    "Log Resultado": {
+      "main": [[{"node": "Loop Over Items", "type": "main", "index": 0}]]
+    },
+    "Wait": {
+      "main": [[{"node": "Loop Over Items", "type": "main", "index": 0}]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a9f7277d11f6b58e32517443fce01fbeedf6f2ef2be5280a8effc862f3cea1d"
+  }
+}
