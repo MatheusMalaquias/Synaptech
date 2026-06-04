@@ -8,7 +8,14 @@
       "Bash(chmod +x \"/Users/matheusmalaquias/Downloads/SmartMind/erp/🚀 Iniciar ERP.command\")",
       "Bash(docker-compose restart *)",
       "Bash(curl -s http://localhost:8000/health)",
-      "Bash(docker-compose exec *)"
+      "Bash(docker-compose exec *)",
+      "Bash(chmod +x /Users/matheusmalaquias/Downloads/SmartMind/erp/setup-vps.sh)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'feat: deploy VPS — GitHub Actions + docker-compose.prod + setup-vps.sh *)",
+      "Bash(git push *)",
+      "Bash(git remote *)",
+      "Bash(git commit -m 'fix: corrige path do clone no setup-vps.sh e remove .env do git *)",
+      "Bash(git commit *)"
     ]
   }
 }

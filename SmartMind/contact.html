@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact SmartMind | AI Automation & Business Intelligence</title>
+    <meta name="description" content="Contact SmartMind to discuss AI automation, system integrations, business intelligence, and operational solutions for your company.">
+    <meta name="author" content="Matheus O. Malaquias">
+    <meta property="og:title" content="Contact SmartMind">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://matheusmalaquias.github.io/wdd231/smartmind/images/smartmindlogo.webp">
+    <meta property="og:url" content="https://matheusmalaquias.github.io/wdd231/smartmind/index.html">
+    <meta property="og:description" content="Have questions? Reach out to our team for information on classes, schedules, and memberships.">
+    <link rel="icon" href="images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <link rel="stylesheet" href="./styles/larger.css">
+    <script src="scripts/main.js" type="module"></script>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <img src="./images/smartmindsquare.png" alt="SmartMind Logo" width="80" height="80">
+            <h1>SmartMind - Intelligent Solutions</h1>
+        </a>
+        <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="solutions.html">Solutions</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-title">
+            <h2>Let's Discuss Your Business Goals</h2>
+            <p>Whether you're looking to automate workflows, improve customer support,
+                integrate business systems, or gain better insights from your data,
+                SmartMind can help.
+            </p>
+        </section>
+
+        <section class="contact-form-section">
+            <form action="thank-you.html" method="get">
+                <fieldset>
+                    <legend>Your Information</legend>
+
+                    <label for="company">Company Name</label>
+                    <input type="text" id="company" name="company">
+
+                    <label for="fullName">Full Name*</label>
+                    <input type="text" id="fullName" name="fullName" required>
+
+                    <label for="email">Email*</label>
+                    <input type="email" id="email" name="email" required placeholder="example@email.com">
+
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="123-456-7890">
+                </fieldset>
+
+                <fieldset>
+                    <legend>Your Message</legend>
+                    <label for="interest">I'm interested in...</label>
+                    <select id="interest" name="interest">
+                        <option value="" disabled selected>Select a Service</option>
+                        <option value="ai-agents">AI Agents</option>
+                        <option value="workflow-automation">Workflow Automation</option>
+                        <option value="system-integrations">System Integrations</option>
+                        <option value="data-intelligence">Data Intelligence</option>
+                        <option value="customer-support">Customer Support Automation</option>
+                        <option value="sales-optimization">Sales Process Optimization</option>
+                        <option value="consultation">General Consultation</option>
+                    </select>
+
+                    <label for="message">Tell us about your business needs</label>
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="6"
+                        required
+                        placeholder="Describe your current challenges, goals, or processes you would like to automate.">
+                    </textarea>
+                </fieldset>
+
+                <button type="submit" class="cta-button">Request Consultation</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span>SmartMind | AI Automation & Business Intelligence | Matheus O. Malaquias</p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "AI Agents",
+    "category": "Artificial Intelligence",
+    "impact": "High Impact",
+    "industry": "Customer Service",
+    "description": "Custom AI assistants that automate customer interactions, qualify leads, answer frequently asked questions, and support internal operations.",
+    "benefit": "Reduce response times and increase operational efficiency.",
+    "technology": "OpenAI, Claude, Gemini",
+    "image": "images/ai-agent.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Workflow Automation",
+    "category": "Business Automation",
+    "impact": "High Impact",
+    "industry": "Operations",
+    "description": "Automate repetitive tasks and connect processes across teams, departments, and software platforms.",
+    "benefit": "Reduce manual work and improve productivity.",
+    "technology": "n8n, Make, Zapier",
+    "image": "images/automation.jpg"
+  },
+  {
+    "id": 3,
+    "name": "System Integrations",
+    "category": "Technology Solutions",
+    "impact": "High Impact",
+    "industry": "Information Technology",
+    "description": "Connect CRMs, databases, spreadsheets, communication platforms, and business applications into a unified ecosystem.",
+    "benefit": "Eliminate data silos and improve information flow.",
+    "technology": "APIs, Webhooks, ERP Systems",
+    "image": "images/integration.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Data Intelligence",
+    "category": "Business Analytics",
+    "impact": "Strategic",
+    "industry": "Business Intelligence",
+    "description": "Transform raw business data into actionable insights through dashboards, reporting, and AI-powered analytics.",
+    "benefit": "Support faster and more accurate decision-making.",
+    "technology": "Power BI, Looker Studio, SQL",
+    "image": "images/data.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Customer Support Automation",
+    "category": "Customer Experience",
+    "impact": "High Impact",
+    "industry": "Support Operations",
+    "description": "Automate ticket handling, customer communication, and support workflows using AI-powered systems.",
+    "benefit": "Improve customer satisfaction while reducing support costs.",
+    "technology": "AI Chatbots, CRM Integration",
+    "image": "images/support.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Sales Process Optimization",
+    "category": "Sales Automation",
+    "impact": "Revenue Growth",
+    "industry": "Sales",
+    "description": "Automate lead qualification, follow-up sequences, pipeline management, and sales reporting.",
+    "benefit": "Increase conversion rates and reduce administrative work.",
+    "technology": "CRM, AI Agents, Automation Platforms",
+    "image": "images/sales.jpg"
+  }
+]
