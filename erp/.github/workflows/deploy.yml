@@ -23,10 +23,13 @@ jobs:
           script: |
             set -e
             echo "📦 Atualizando código..."
-            cd /opt/erp
+            cd /opt/erp-repo
             git pull origin main
+            cp -rf /opt/erp-repo/erp/backend /opt/erp/erp/
+            cp -f /opt/erp-repo/erp/docker-compose.prod.yml /opt/erp/erp/
 
             echo "🔨 Rebuilding backend..."
+            cd /opt/erp/erp
             docker compose -f docker-compose.prod.yml build backend
 
             echo "🚀 Subindo serviços..."
