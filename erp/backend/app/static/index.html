@@ -521,6 +521,13 @@
       <button class="btn-acao" onclick="cancelarVenda()" style="color:#e94560">
         <span class="tecla">F10</span> Cancelar Venda
       </button>
+
+      <div class="divisor"></div>
+      <div class="acoes-titulo">RELATÓRIO</div>
+
+      <button class="btn-acao" onclick="abrirVendasDia()" style="color:#66d9e8">
+        <span class="tecla">F2</span> Vendas do Dia
+      </button>
     </div>
   </div>
 
@@ -657,6 +664,55 @@
       <div class="sucesso-forma" id="suc-forma"></div>
       <div class="sucesso-troco" id="suc-troco"></div>
       <button class="btn-primary" onclick="novaVenda()">NOVA VENDA — ENTER</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: VENDAS DO DIA                            -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-vendas-dia">
+  <div class="modal" style="width:900px;max-width:95vw">
+    <div class="modal-titulo">
+      VENDAS DO DIA — <span id="vd-data"></span>
+      <button class="modal-fechar" onclick="fecharModal('modal-vendas-dia')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Totais -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
+          <div style="color:#888;font-size:11px">TOTAL VENDAS</div>
+          <div style="color:#e94560;font-size:20px;font-weight:bold" id="vd-total-valor">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
+          <div style="color:#888;font-size:11px">Nº DE VENDAS</div>
+          <div style="color:#fff;font-size:20px;font-weight:bold" id="vd-qtd">0</div>
+        </div>
+        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
+          <div style="color:#888;font-size:11px">PIX</div>
+          <div style="color:#27ae60;font-size:16px;font-weight:bold" id="vd-pix">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
+          <div style="color:#888;font-size:11px">DINHEIRO</div>
+          <div style="color:#66d9e8;font-size:16px;font-weight:bold" id="vd-dinheiro">R$ 0,00</div>
+        </div>
+      </div>
+      <!-- Lista de vendas -->
+      <div style="max-height:55vh;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="background:#16213e;padding:6px 8px;text-align:left;color:#888;font-size:11px;position:sticky;top:0">#</th>
+              <th style="background:#16213e;padding:6px 8px;text-align:left;color:#888;font-size:11px;position:sticky;top:0">Produto</th>
+              <th style="background:#16213e;padding:6px 8px;text-align:right;color:#888;font-size:11px;position:sticky;top:0">Total</th>
+              <th style="background:#16213e;padding:6px 8px;text-align:center;color:#888;font-size:11px;position:sticky;top:0">Pagamento</th>
+              <th style="background:#16213e;padding:6px 8px;text-align:left;color:#888;font-size:11px;position:sticky;top:0">Horário</th>
+              <th style="background:#16213e;padding:6px 8px;text-align:center;color:#888;font-size:11px;position:sticky;top:0">Status</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-vendas-dia"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -1047,6 +1103,51 @@ function novaVenda() {
   setStatus('Caixa aberto — pronto para vender');
 }
 
+// ── VENDAS DO DIA ─────────────────────────────────────────────
+async function abrirVendasDia() {
+  abrirModal('modal-vendas-dia');
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('vd-data').textContent = new Date().toLocaleDateString('pt-BR');
+
+  try {
+    const data = await api('GET', `/vendas?limit=200&status=finalizada`);
+    const vendas = (data?.items || []).filter(v => v.criado_em?.startsWith(hoje) || true);
+
+    let totalValor = 0, totalPix = 0, totalDinheiro = 0;
+    const rows = [];
+
+    for (const v of vendas) {
+      totalValor += parseFloat(v.total_final || 0);
+      const pags = v.pagamentos || [];
+      const formaPrincipal = pags[0]?.forma || '—';
+      for (const p of pags) {
+        if (p.forma === 'pix') totalPix += parseFloat(p.valor || 0);
+        if (p.forma === 'dinheiro') totalDinheiro += parseFloat(p.valor || 0);
+      }
+      const produto = v.itens?.[0]?.descricao || '—';
+      const hora = v.finalizado_em ? new Date(v.finalizado_em).toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '—';
+      const statusCor = v.status === 'finalizada' ? '#27ae60' : v.status === 'cancelada' ? '#e94560' : '#888';
+      rows.push(`<tr style="border-bottom:1px solid #1a2a4a">
+        <td style="padding:6px 8px;color:#888;font-size:11px">${v.numero}</td>
+        <td style="padding:6px 8px;color:#fff;font-size:13px">${produto}</td>
+        <td style="padding:6px 8px;text-align:right;color:#e94560;font-weight:bold">${fmtBRL(v.total_final)}</td>
+        <td style="padding:6px 8px;text-align:center;color:#66d9e8;font-size:12px">${formaPrincipal.toUpperCase()}</td>
+        <td style="padding:6px 8px;color:#aaa;font-size:12px">${hora}</td>
+        <td style="padding:6px 8px;text-align:center;font-size:11px;color:${statusCor}">${v.status.toUpperCase()}</td>
+      </tr>`);
+    }
+
+    document.getElementById('vd-total-valor').textContent = fmtBRL(totalValor);
+    document.getElementById('vd-qtd').textContent = vendas.length;
+    document.getElementById('vd-pix').textContent = fmtBRL(totalPix);
+    document.getElementById('vd-dinheiro').textContent = fmtBRL(totalDinheiro);
+    document.getElementById('tbody-vendas-dia').innerHTML = rows.join('') ||
+      '<tr><td colspan="6" style="text-align:center;color:#555;padding:24px">Nenhuma venda registrada hoje</td></tr>';
+  } catch(e) {
+    notif('Erro ao carregar vendas: ' + e.message, 'erro');
+  }
+}
+
 // ── SAIR ─────────────────────────────────────────────────────
 function sair() {
   localStorage.removeItem('erp_token');
@@ -1069,6 +1170,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Enter' && modalAberto.id === 'modal-sucesso') novaVenda();
     return;
   }
+  if (e.key === 'F2')  { e.preventDefault(); abrirVendasDia(); }
   if (e.key === 'F7')  { e.preventDefault(); abrirBuscaProduto(); }
   if (e.key === 'F5')  { e.preventDefault(); iniciarPagamento('dinheiro'); }
   if (e.key === 'F9')  { e.preventDefault(); cancelarUltimoItem(); }
