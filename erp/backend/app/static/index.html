@@ -460,6 +460,8 @@
             <div><span class="atalho-key">F5</span> Pagamento Dinheiro</div>
             <div><span class="atalho-key">X</span> PIX Dinâmico</div>
             <div><span class="atalho-key">F9</span> Cancelar Item</div>
+            <div><span class="atalho-key">F2</span> Vendas do Dia</div>
+            <div><span class="atalho-key">F3</span> Histórico</div>
             <div><span class="atalho-key">F10</span> Cancelar Venda</div>
             <div><span class="atalho-key">ESC</span> Fechar Modal</div>
           </div>
@@ -526,6 +528,9 @@
 
       <button class="btn-acao" onclick="abrirVendasDia()" style="color:#66d9e8">
         <span class="tecla">F2</span> Vendas do Dia
+      </button>
+      <button class="btn-acao" onclick="abrirHistorico()" style="color:#a8e6cf">
+        <span class="tecla">F3</span> Histórico
       </button>
     </div>
   </div>
@@ -671,47 +676,144 @@
 <!--  MODAL: VENDAS DO DIA                            -->
 <!-- ════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-vendas-dia">
-  <div class="modal" style="width:900px;max-width:95vw">
+  <div class="modal" style="width:960px;max-width:97vw">
     <div class="modal-titulo">
-      VENDAS DO DIA — <span id="vd-data"></span>
+      📊 VENDAS DO DIA — <span id="vd-data"></span>
       <button class="modal-fechar" onclick="fecharModal('modal-vendas-dia')">✕</button>
     </div>
     <div class="modal-body">
-      <!-- Totais -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
-        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
-          <div style="color:#888;font-size:11px">TOTAL VENDAS</div>
-          <div style="color:#e94560;font-size:20px;font-weight:bold" id="vd-total-valor">R$ 0,00</div>
+      <!-- Cards de totais -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px">
+        <div style="background:#1a1a2e;border:1px solid #e94560;padding:10px;border-radius:3px;text-align:center;grid-column:span 2">
+          <div style="color:#888;font-size:10px;letter-spacing:1px">TOTAL DO DIA</div>
+          <div style="color:#e94560;font-size:22px;font-weight:bold" id="vd-total-valor">R$ 0,00</div>
+          <div style="color:#555;font-size:11px"><span id="vd-qtd">0</span> vendas finalizadas</div>
         </div>
-        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
-          <div style="color:#888;font-size:11px">Nº DE VENDAS</div>
-          <div style="color:#fff;font-size:20px;font-weight:bold" id="vd-qtd">0</div>
-        </div>
-        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
-          <div style="color:#888;font-size:11px">PIX</div>
+        <div style="background:#0f3460;padding:10px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">📱 PIX</div>
           <div style="color:#27ae60;font-size:16px;font-weight:bold" id="vd-pix">R$ 0,00</div>
         </div>
-        <div style="background:#0f3460;padding:10px;border-radius:2px;text-align:center">
-          <div style="color:#888;font-size:11px">DINHEIRO</div>
+        <div style="background:#0f3460;padding:10px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">💵 DINHEIRO</div>
           <div style="color:#66d9e8;font-size:16px;font-weight:bold" id="vd-dinheiro">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:10px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">💳 DÉBITO</div>
+          <div style="color:#a8e6cf;font-size:16px;font-weight:bold" id="vd-debito">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:10px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">💳 CRÉDITO</div>
+          <div style="color:#ffcc80;font-size:16px;font-weight:bold" id="vd-credito">R$ 0,00</div>
         </div>
       </div>
       <!-- Lista de vendas -->
-      <div style="max-height:55vh;overflow-y:auto">
+      <div style="max-height:52vh;overflow-y:auto">
         <table style="width:100%;border-collapse:collapse">
           <thead>
             <tr>
-              <th style="background:#16213e;padding:6px 8px;text-align:left;color:#888;font-size:11px;position:sticky;top:0">#</th>
-              <th style="background:#16213e;padding:6px 8px;text-align:left;color:#888;font-size:11px;position:sticky;top:0">Produto</th>
-              <th style="background:#16213e;padding:6px 8px;text-align:right;color:#888;font-size:11px;position:sticky;top:0">Total</th>
-              <th style="background:#16213e;padding:6px 8px;text-align:center;color:#888;font-size:11px;position:sticky;top:0">Pagamento</th>
-              <th style="background:#16213e;padding:6px 8px;text-align:left;color:#888;font-size:11px;position:sticky;top:0">Horário</th>
-              <th style="background:#16213e;padding:6px 8px;text-align:center;color:#888;font-size:11px;position:sticky;top:0">Status</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:left;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">#</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:left;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Itens</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:right;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Total</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Pagamento</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Horário</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Status</th>
             </tr>
           </thead>
           <tbody id="tbody-vendas-dia"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════ -->
+<!--  MODAL: HISTÓRICO DE VENDAS                      -->
+<!-- ════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-historico">
+  <div class="modal" style="width:980px;max-width:97vw">
+    <div class="modal-titulo">
+      🗂 HISTÓRICO DE VENDAS
+      <button class="modal-fechar" onclick="fecharModal('modal-historico')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Filtros -->
+      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap">
+        <div>
+          <div style="color:#888;font-size:11px;margin-bottom:4px">DATA INÍCIO</div>
+          <input type="date" id="hist-data-ini"
+            style="padding:8px;background:#0f3460;border:1px solid #1a4a8a;color:#fff;font-family:inherit;font-size:13px;border-radius:2px">
+        </div>
+        <div>
+          <div style="color:#888;font-size:11px;margin-bottom:4px">DATA FIM</div>
+          <input type="date" id="hist-data-fim"
+            style="padding:8px;background:#0f3460;border:1px solid #1a4a8a;color:#fff;font-family:inherit;font-size:13px;border-radius:2px">
+        </div>
+        <div>
+          <div style="color:#888;font-size:11px;margin-bottom:4px">STATUS</div>
+          <select id="hist-status"
+            style="padding:8px;background:#0f3460;border:1px solid #1a4a8a;color:#fff;font-family:inherit;font-size:13px;border-radius:2px">
+            <option value="">Todos</option>
+            <option value="finalizada">Finalizada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+        </div>
+        <button class="btn-primary" style="padding:8px 20px;width:auto" onclick="buscarHistorico()">
+          🔍 BUSCAR
+        </button>
+        <button class="btn-acao" style="padding:8px 16px;width:auto" onclick="historicoHoje()">
+          Hoje
+        </button>
+        <button class="btn-acao" style="padding:8px 16px;width:auto" onclick="historicoSemana()">
+          Últimos 7 dias
+        </button>
+        <button class="btn-acao" style="padding:8px 16px;width:auto" onclick="historicoMes()">
+          Este mês
+        </button>
+      </div>
+      <!-- Cards de totais do período -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px" id="hist-cards" style="display:none">
+        <div style="background:#1a1a2e;border:1px solid #e94560;padding:8px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">TOTAL PERÍODO</div>
+          <div style="color:#e94560;font-size:18px;font-weight:bold" id="hist-total">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:8px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">📱 PIX</div>
+          <div style="color:#27ae60;font-size:14px;font-weight:bold" id="hist-pix">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:8px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">💵 DINHEIRO</div>
+          <div style="color:#66d9e8;font-size:14px;font-weight:bold" id="hist-dinheiro">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:8px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">💳 DÉBITO</div>
+          <div style="color:#a8e6cf;font-size:14px;font-weight:bold" id="hist-debito">R$ 0,00</div>
+        </div>
+        <div style="background:#0f3460;padding:8px;border-radius:3px;text-align:center">
+          <div style="color:#888;font-size:10px">💳 CRÉDITO</div>
+          <div style="color:#ffcc80;font-size:14px;font-weight:bold" id="hist-credito">R$ 0,00</div>
+        </div>
+      </div>
+      <!-- Tabela -->
+      <div style="max-height:50vh;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="background:#0f3460;padding:7px 8px;text-align:left;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">#</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:left;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Data/Hora</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:left;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Itens</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:right;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Total</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Pagamento</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Status</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-historico">
+            <tr><td colspan="6" style="text-align:center;color:#555;padding:32px">
+              Selecione um período e clique em Buscar
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="hist-paginacao" style="margin-top:10px;text-align:center;color:#555;font-size:12px"></div>
     </div>
   </div>
 </div>
@@ -1179,6 +1281,130 @@ async function abrirVendasDia() {
   }
 }
 
+// ── HISTÓRICO DE VENDAS ───────────────────────────────────────
+function fmtDataHora(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+}
+function fmtData(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('pt-BR');
+}
+
+function historicoHoje() {
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('hist-data-ini').value = hoje;
+  document.getElementById('hist-data-fim').value = hoje;
+  buscarHistorico();
+}
+function historicoSemana() {
+  const fim = new Date();
+  const ini = new Date(); ini.setDate(ini.getDate() - 6);
+  document.getElementById('hist-data-ini').value = ini.toISOString().split('T')[0];
+  document.getElementById('hist-data-fim').value = fim.toISOString().split('T')[0];
+  buscarHistorico();
+}
+function historicoMes() {
+  const hoje = new Date();
+  const ini = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  document.getElementById('hist-data-ini').value = ini.toISOString().split('T')[0];
+  document.getElementById('hist-data-fim').value = hoje.toISOString().split('T')[0];
+  buscarHistorico();
+}
+
+async function abrirHistorico() {
+  abrirModal('modal-historico');
+  // Pré-preenche com hoje
+  const hoje = new Date().toISOString().split('T')[0];
+  if (!document.getElementById('hist-data-ini').value) {
+    document.getElementById('hist-data-ini').value = hoje;
+    document.getElementById('hist-data-fim').value = hoje;
+    await buscarHistorico();
+  }
+}
+
+async function buscarHistorico() {
+  const dataIni = document.getElementById('hist-data-ini').value;
+  const dataFim = document.getElementById('hist-data-fim').value;
+  const statusFiltro = document.getElementById('hist-status').value;
+
+  document.getElementById('tbody-historico').innerHTML =
+    '<tr><td colspan="6" style="text-align:center;color:#555;padding:32px">Buscando...</td></tr>';
+
+  try {
+    // Busca em lotes de até 200
+    let url = `/vendas?limit=200`;
+    if (statusFiltro) url += `&status=${statusFiltro}`;
+    const data = await api('GET', url);
+    let vendas = data?.items || [];
+
+    // Filtra por data localmente
+    if (dataIni || dataFim) {
+      vendas = vendas.filter(v => {
+        const d = new Date(v.criado_em);
+        const ds = d.toISOString().split('T')[0];
+        if (dataIni && ds < dataIni) return false;
+        if (dataFim && ds > dataFim) return false;
+        return true;
+      });
+    }
+
+    // Calcula totais do período
+    let total = 0, pix = 0, din = 0, deb = 0, cre = 0, qtd = 0;
+    for (const v of vendas) {
+      if (v.status === 'finalizada') {
+        total += parseFloat(v.total_final || 0);
+        qtd++;
+        for (const p of (v.pagamentos || [])) {
+          if (p.forma === 'pix')      pix += parseFloat(p.valor || 0);
+          if (p.forma === 'dinheiro') din += parseFloat(p.valor || 0);
+          if (p.forma === 'debito')   deb += parseFloat(p.valor || 0);
+          if (p.forma === 'credito')  cre += parseFloat(p.valor || 0);
+        }
+      }
+    }
+
+    document.getElementById('hist-total').textContent   = fmtBRL(total);
+    document.getElementById('hist-pix').textContent     = fmtBRL(pix);
+    document.getElementById('hist-dinheiro').textContent= fmtBRL(din);
+    document.getElementById('hist-debito').textContent  = fmtBRL(deb);
+    document.getElementById('hist-credito').textContent = fmtBRL(cre);
+    document.getElementById('hist-cards').style.display = 'grid';
+    document.getElementById('hist-paginacao').textContent =
+      `${qtd} venda(s) finalizada(s) no período — total de ${vendas.length} registros`;
+
+    if (vendas.length === 0) {
+      document.getElementById('tbody-historico').innerHTML =
+        '<tr><td colspan="6" style="text-align:center;color:#555;padding:32px">Nenhuma venda encontrada no período</td></tr>';
+      return;
+    }
+
+    const rows = vendas.map(v => {
+      const pags = v.pagamentos || [];
+      const formas = [...new Set(pags.map(p => p.forma))].map(f => f.toUpperCase()).join(', ') || '—';
+      const itensDesc = (v.itens || []).map(i => i.descricao).join(', ') || '—';
+      const resumo = itensDesc.length > 45 ? itensDesc.substring(0, 45) + '…' : itensDesc;
+      const dataHora = fmtDataHora(v.finalizado_em || v.criado_em);
+      const statusCor = v.status === 'finalizada' ? '#27ae60' : v.status === 'cancelada' ? '#e94560' : '#888';
+      const totalCor  = v.status === 'cancelada' ? '#555' : '#e94560';
+      return `<tr style="border-bottom:1px solid #1a2a4a;cursor:default" onmouseover="this.style.background='#1a2a4a'" onmouseout="this.style.background=''">
+        <td style="padding:6px 8px;color:#888;font-size:11px">#${v.numero}</td>
+        <td style="padding:6px 8px;color:#aaa;font-size:11px;white-space:nowrap">${dataHora}</td>
+        <td style="padding:6px 8px;color:#fff;font-size:12px">${resumo}</td>
+        <td style="padding:6px 8px;text-align:right;color:${totalCor};font-weight:bold">${fmtBRL(v.total_final)}</td>
+        <td style="padding:6px 8px;text-align:center;color:#66d9e8;font-size:11px">${formas}</td>
+        <td style="padding:6px 8px;text-align:center;font-size:11px;color:${statusCor}">${v.status.toUpperCase()}</td>
+      </tr>`;
+    });
+    document.getElementById('tbody-historico').innerHTML = rows.join('');
+  } catch(e) {
+    notif('Erro ao buscar histórico: ' + e.message, 'erro');
+    document.getElementById('tbody-historico').innerHTML =
+      `<tr><td colspan="6" style="text-align:center;color:#e94560;padding:32px">Erro: ${e.message}</td></tr>`;
+  }
+}
+
 // ── SAIR ─────────────────────────────────────────────────────
 function sair() {
   localStorage.removeItem('erp_token');
@@ -1202,6 +1428,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'F2')  { e.preventDefault(); abrirVendasDia(); }
+  if (e.key === 'F3')  { e.preventDefault(); abrirHistorico(); }
   if (e.key === 'F7')  { e.preventDefault(); abrirBuscaProduto(); }
   if (e.key === 'F5')  { e.preventDefault(); iniciarPagamento('dinheiro'); }
   if (e.key === 'F9')  { e.preventDefault(); cancelarUltimoItem(); }
