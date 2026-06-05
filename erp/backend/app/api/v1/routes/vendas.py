@@ -39,6 +39,7 @@ from app.schemas.venda import (
     VendaListResponse,
     VendaOut,
 )
+from app.api.v1.dependencies import require_perfil
 
 router = APIRouter()
 
@@ -469,3 +470,54 @@ async def cancelar_venda(
     })
 
     return await _venda_to_out(venda, db)
+
+
+@router.delete(
+    "/{venda_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Excluir venda permanentemente (admin)",
+    dependencies=[Depends(require_perfil("admin"))],
+)
+async def excluir_venda(
+    venda_id: UUID,
+    current_user: CurrentUser = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Remove permanentemente uma venda e todos os seus itens e pagamentos do banco.
+    **Ação irreversível — exclusiva para administradores.**
+    Vendas com NFC-e emitida não podem ser excluídas.
+    """
+    from sqlalchemy import delete as sa_delete
+
+    repo = VendaRepository(db)
+    audit = AuditoriaRepository(db)
+    venda = await repo.buscar_por_id(venda_id)
+
+    if not venda:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Venda não encontrada")
+
+    if str(venda.nfce_status) == "emitida":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Não é possível excluir venda com NFC-e emitida",
+        )
+
+    # Registra na auditoria antes de excluir
+    await audit.registrar(
+        acao="venda_excluida",
+        usuario_id=current_user.id,
+        tabela="vendas",
+        registro_id=str(venda.id),
+        dados_antes={
+            "numero": venda.numero,
+            "total_final": str(venda.total_final),
+            "status": str(venda.status),
+        },
+    )
+
+    # Remove itens, pagamentos e a venda
+    await db.execute(sa_delete(ItemVenda).where(ItemVenda.venda_id == venda_id))
+    await db.execute(sa_delete(PagamentoVenda).where(PagamentoVenda.venda_id == venda_id))
+    await db.delete(venda)
+    await db.flush()

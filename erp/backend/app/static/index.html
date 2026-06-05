@@ -717,6 +717,7 @@
               <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Pagamento</th>
               <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Horário</th>
               <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Status</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Ações</th>
             </tr>
           </thead>
           <tbody id="tbody-vendas-dia"></tbody>
@@ -804,6 +805,7 @@
               <th style="background:#0f3460;padding:7px 8px;text-align:right;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Total</th>
               <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Pagamento</th>
               <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Status</th>
+              <th style="background:#0f3460;padding:7px 8px;text-align:center;color:#aaa;font-size:11px;position:sticky;top:0;border-bottom:1px solid #1a4a8a">Ações</th>
             </tr>
           </thead>
           <tbody id="tbody-historico">
@@ -1255,6 +1257,7 @@ async function abrirVendasDia() {
 
       const statusCor  = v.status === 'finalizada' ? '#27ae60' : v.status === 'cancelada' ? '#e94560' : '#888';
       const totalCor   = v.status === 'cancelada' ? '#555' : '#e94560';
+      const acoes = botoesAcao(v, 'abrirVendasDia');
       rows.push(`<tr style="border-bottom:1px solid #1a2a4a">
         <td style="padding:6px 8px;color:#888;font-size:11px">#${v.numero}</td>
         <td style="padding:6px 8px;color:#fff;font-size:12px">${resumo}</td>
@@ -1262,6 +1265,7 @@ async function abrirVendasDia() {
         <td style="padding:6px 8px;text-align:center;color:#66d9e8;font-size:11px">${formaPrincipal.toUpperCase()}</td>
         <td style="padding:6px 8px;color:#aaa;font-size:12px">${hora}</td>
         <td style="padding:6px 8px;text-align:center;font-size:11px;color:${statusCor}">${v.status.toUpperCase()}</td>
+        <td style="padding:4px 8px;text-align:center">${acoes}</td>
       </tr>`);
     }
 
@@ -1278,6 +1282,60 @@ async function abrirVendasDia() {
     }
   } catch(e) {
     notif('Erro ao carregar vendas: ' + e.message, 'erro');
+  }
+}
+
+// ── AÇÕES DO HISTÓRICO (cancelar / excluir) ───────────────────
+function botoesAcao(v, callbackFn) {
+  const isAdmin = usuario?.perfil === 'admin';
+  const podeCanc = v.status !== 'cancelada';
+  let html = '';
+  if (podeCanc) {
+    html += `<button onclick="cancelarVendaHistorico('${v.id}','${callbackFn}')"
+      title="Cancelar venda #${v.numero}"
+      style="background:#2a1a1a;color:#e94560;border:1px solid #e94560;cursor:pointer;
+             padding:2px 8px;font-size:11px;border-radius:2px;margin:1px">
+      Cancelar
+    </button>`;
+  }
+  if (isAdmin) {
+    html += `<button onclick="excluirVenda('${v.id}','${v.numero}','${callbackFn}')"
+      title="Excluir permanentemente #${v.numero}"
+      style="background:#1a0a0a;color:#ff4444;border:1px solid #660000;cursor:pointer;
+             padding:2px 8px;font-size:11px;border-radius:2px;margin:1px">
+      Excluir
+    </button>`;
+  }
+  return html || '<span style="color:#333;font-size:11px">—</span>';
+}
+
+async function cancelarVendaHistorico(vendaId, callbackFn) {
+  const motivo = prompt('Motivo do cancelamento:');
+  if (motivo === null) return; // usuário clicou em Cancelar no prompt
+  if (!motivo.trim()) { notif('Informe o motivo do cancelamento', 'erro'); return; }
+  try {
+    await api('POST', `/vendas/${vendaId}/cancelar`, { motivo: motivo.trim() });
+    notif('✓ Venda cancelada', 'ok');
+    // Atualiza a lista
+    if (callbackFn === 'buscarHistorico') await buscarHistorico();
+    else await abrirVendasDia();
+  } catch(e) {
+    notif('Erro ao cancelar: ' + e.message, 'erro');
+  }
+}
+
+async function excluirVenda(vendaId, numero, callbackFn) {
+  const confirmar = confirm(
+    `⚠️ EXCLUIR PERMANENTEMENTE a venda #${numero}?\n\nEsta ação é IRREVERSÍVEL e remove todos os dados da venda do banco de dados.\n\nConfirmar?`
+  );
+  if (!confirmar) return;
+  try {
+    await api('DELETE', `/vendas/${vendaId}`);
+    notif(`✓ Venda #${numero} excluída`, 'ok');
+    if (callbackFn === 'buscarHistorico') await buscarHistorico();
+    else await abrirVendasDia();
+  } catch(e) {
+    notif('Erro ao excluir: ' + e.message, 'erro');
   }
 }
 
@@ -1388,6 +1446,7 @@ async function buscarHistorico() {
       const dataHora = fmtDataHora(v.finalizado_em || v.criado_em);
       const statusCor = v.status === 'finalizada' ? '#27ae60' : v.status === 'cancelada' ? '#e94560' : '#888';
       const totalCor  = v.status === 'cancelada' ? '#555' : '#e94560';
+      const acoes = botoesAcao(v, 'buscarHistorico');
       return `<tr style="border-bottom:1px solid #1a2a4a;cursor:default" onmouseover="this.style.background='#1a2a4a'" onmouseout="this.style.background=''">
         <td style="padding:6px 8px;color:#888;font-size:11px">#${v.numero}</td>
         <td style="padding:6px 8px;color:#aaa;font-size:11px;white-space:nowrap">${dataHora}</td>
@@ -1395,6 +1454,7 @@ async function buscarHistorico() {
         <td style="padding:6px 8px;text-align:right;color:${totalCor};font-weight:bold">${fmtBRL(v.total_final)}</td>
         <td style="padding:6px 8px;text-align:center;color:#66d9e8;font-size:11px">${formas}</td>
         <td style="padding:6px 8px;text-align:center;font-size:11px;color:${statusCor}">${v.status.toUpperCase()}</td>
+        <td style="padding:4px 8px;text-align:center">${acoes}</td>
       </tr>`;
     });
     document.getElementById('tbody-historico').innerHTML = rows.join('');
