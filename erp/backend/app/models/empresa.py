@@ -3,9 +3,9 @@ import uuid
 from datetime import datetime
 
 import sqlalchemy as sa
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base
+from app.core.database import Base
 
 
 class Empresa(Base):
