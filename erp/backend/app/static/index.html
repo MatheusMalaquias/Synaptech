@@ -471,10 +471,9 @@
             <tr>
               <th style="width:40px">Seq</th>
               <th>Descrição</th>
-              <th style="width:80px">Un</th>
-              <th style="width:90px;text-align:right">Qtd</th>
+              <th style="width:110px;text-align:right">Qtd</th>
               <th style="width:90px;text-align:right">Preço</th>
-              <th style="width:90px;text-align:right">Subtotal</th>
+              <th style="width:100px;text-align:right">Subtotal</th>
               <th style="width:40px"></th>
             </tr>
           </thead>
@@ -1106,43 +1105,75 @@ function novaVenda() {
 // ── VENDAS DO DIA ─────────────────────────────────────────────
 async function abrirVendasDia() {
   abrirModal('modal-vendas-dia');
-  const hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('vd-data').textContent = new Date().toLocaleDateString('pt-BR');
+  const agora = new Date();
+  const hoje = agora.toISOString().split('T')[0]; // "2026-06-05"
+  document.getElementById('vd-data').textContent = agora.toLocaleDateString('pt-BR');
+  document.getElementById('tbody-vendas-dia').innerHTML =
+    '<tr><td colspan="6" style="text-align:center;color:#555;padding:24px">Carregando...</td></tr>';
 
   try {
-    const data = await api('GET', `/vendas?limit=200&status=finalizada`);
-    const vendas = (data?.items || []).filter(v => v.criado_em?.startsWith(hoje) || true);
+    // Busca as últimas 200 vendas (finalizadas e canceladas)
+    const data = await api('GET', `/vendas?limit=200`);
+    // Filtra só as de hoje (compara a data local, não UTC)
+    const vendas = (data?.items || []).filter(v => {
+      if (!v.criado_em) return false;
+      const dataVenda = new Date(v.criado_em).toLocaleDateString('pt-BR');
+      return dataVenda === agora.toLocaleDateString('pt-BR');
+    });
 
-    let totalValor = 0, totalPix = 0, totalDinheiro = 0;
+    // Calcula totais apenas de vendas FINALIZADAS
+    let totalValor = 0, totalPix = 0, totalDinheiro = 0, totalDebito = 0, totalCredito = 0;
+    let qtdFinalizadas = 0;
     const rows = [];
 
     for (const v of vendas) {
-      totalValor += parseFloat(v.total_final || 0);
       const pags = v.pagamentos || [];
       const formaPrincipal = pags[0]?.forma || '—';
-      for (const p of pags) {
-        if (p.forma === 'pix') totalPix += parseFloat(p.valor || 0);
-        if (p.forma === 'dinheiro') totalDinheiro += parseFloat(p.valor || 0);
+
+      if (v.status === 'finalizada') {
+        totalValor += parseFloat(v.total_final || 0);
+        qtdFinalizadas++;
+        for (const p of pags) {
+          if (p.forma === 'pix')      totalPix      += parseFloat(p.valor || 0);
+          if (p.forma === 'dinheiro') totalDinheiro += parseFloat(p.valor || 0);
+          if (p.forma === 'debito')   totalDebito   += parseFloat(p.valor || 0);
+          if (p.forma === 'credito')  totalCredito  += parseFloat(p.valor || 0);
+        }
       }
-      const produto = v.itens?.[0]?.descricao || '—';
-      const hora = v.finalizado_em ? new Date(v.finalizado_em).toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '—';
-      const statusCor = v.status === 'finalizada' ? '#27ae60' : v.status === 'cancelada' ? '#e94560' : '#888';
+
+      // Monta resumo de itens
+      const itensDesc = (v.itens || []).map(i => i.descricao).join(', ') || '—';
+      const resumo = itensDesc.length > 40 ? itensDesc.substring(0, 40) + '…' : itensDesc;
+
+      const hora = v.finalizado_em
+        ? new Date(v.finalizado_em).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
+        : v.criado_em
+          ? new Date(v.criado_em).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
+          : '—';
+
+      const statusCor  = v.status === 'finalizada' ? '#27ae60' : v.status === 'cancelada' ? '#e94560' : '#888';
+      const totalCor   = v.status === 'cancelada' ? '#555' : '#e94560';
       rows.push(`<tr style="border-bottom:1px solid #1a2a4a">
-        <td style="padding:6px 8px;color:#888;font-size:11px">${v.numero}</td>
-        <td style="padding:6px 8px;color:#fff;font-size:13px">${produto}</td>
-        <td style="padding:6px 8px;text-align:right;color:#e94560;font-weight:bold">${fmtBRL(v.total_final)}</td>
-        <td style="padding:6px 8px;text-align:center;color:#66d9e8;font-size:12px">${formaPrincipal.toUpperCase()}</td>
+        <td style="padding:6px 8px;color:#888;font-size:11px">#${v.numero}</td>
+        <td style="padding:6px 8px;color:#fff;font-size:12px">${resumo}</td>
+        <td style="padding:6px 8px;text-align:right;color:${totalCor};font-weight:bold">${fmtBRL(v.total_final)}</td>
+        <td style="padding:6px 8px;text-align:center;color:#66d9e8;font-size:11px">${formaPrincipal.toUpperCase()}</td>
         <td style="padding:6px 8px;color:#aaa;font-size:12px">${hora}</td>
         <td style="padding:6px 8px;text-align:center;font-size:11px;color:${statusCor}">${v.status.toUpperCase()}</td>
       </tr>`);
     }
 
     document.getElementById('vd-total-valor').textContent = fmtBRL(totalValor);
-    document.getElementById('vd-qtd').textContent = vendas.length;
+    document.getElementById('vd-qtd').textContent = qtdFinalizadas;
     document.getElementById('vd-pix').textContent = fmtBRL(totalPix);
     document.getElementById('vd-dinheiro').textContent = fmtBRL(totalDinheiro);
     document.getElementById('tbody-vendas-dia').innerHTML = rows.join('') ||
       '<tr><td colspan="6" style="text-align:center;color:#555;padding:24px">Nenhuma venda registrada hoje</td></tr>';
+
+    // Atualiza o card de Débito+Crédito se existirem
+    if (totalDebito + totalCredito > 0) {
+      notif(`Cartões: ${fmtBRL(totalDebito + totalCredito)} (Déb: ${fmtBRL(totalDebito)} / Créd: ${fmtBRL(totalCredito)})`, 'ok', 5000);
+    }
   } catch(e) {
     notif('Erro ao carregar vendas: ' + e.message, 'erro');
   }
