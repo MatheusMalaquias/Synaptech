@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERP FLV — Gerenciar Empresas</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── LOGIN ── */
+  #tela-login {
+    display: flex; align-items: center; justify-content: center; height: 100vh;
+  }
+  .login-box {
+    background: #16213e; border: 2px solid #0f3460; border-radius: 4px;
+    padding: 32px 40px; width: 360px; text-align: center;
+  }
+  .login-box h1 { font-size: 20px; color: #e94560; margin-bottom: 4px; letter-spacing: 2px; }
+  .login-box p  { color: #888; font-size: 11px; margin-bottom: 24px; }
+  .login-box input {
+    width: 100%; padding: 10px; margin-bottom: 12px;
+    background: #0f3460; border: 1px solid #e94560;
+    color: #fff; border-radius: 2px; font-family: inherit; font-size: 14px;
+  }
+  .btn-primary {
+    width: 100%; padding: 11px; background: #e94560; color: #fff; border: none;
+    font-size: 14px; font-weight: bold; cursor: pointer;
+    font-family: inherit; letter-spacing: 1px; border-radius: 2px;
+  }
+  .btn-primary:hover { background: #c73652; }
+  .login-erro { color: #e94560; font-size: 12px; margin-top: 8px; min-height: 18px; }
+
+  /* ── LAYOUT ── */
+  #tela-admin { display: none; flex-direction: column; min-height: 100vh; }
+
+  .topbar {
+    background: #0f3460; padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 2px solid #e94560; position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-logo { color: #e94560; font-weight: bold; font-size: 18px; letter-spacing: 2px; }
+  .topbar-sub  { color: #888; font-size: 12px; margin-top: 2px; }
+  .topbar-dir  { display: flex; align-items: center; gap: 12px; }
+  .btn-sair {
+    background: #e94560; color: #fff; border: none;
+    padding: 6px 14px; cursor: pointer; font-family: inherit; font-size: 12px; border-radius: 2px;
+  }
+  .btn-pdv {
+    background: #0f3460; color: #aaa; border: 1px solid #1a4a8a;
+    padding: 6px 14px; cursor: pointer; font-family: inherit; font-size: 12px; border-radius: 2px;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-pdv:hover { background: #1a4a8a; color: #fff; }
+
+  .main-content { padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+  /* ── STATS CARDS ── */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #16213e; border: 1px solid #0f3460; border-radius: 4px; padding: 16px; text-align: center;
+  }
+  .stat-label { color: #888; font-size: 11px; letter-spacing: 1px; margin-bottom: 6px; }
+  .stat-valor { font-size: 28px; font-weight: bold; }
+  .stat-card.total  .stat-valor { color: #e94560; }
+  .stat-card.ativas .stat-valor { color: #27ae60; }
+  .stat-card.inativas .stat-valor { color: #888; }
+  .stat-card.planos .stat-valor { color: #66d9e8; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+  }
+  .toolbar-esq { display: flex; gap: 8px; align-items: center; }
+  .toolbar h2 { color: #fff; font-size: 16px; letter-spacing: 1px; }
+  .btn-novo {
+    background: #e94560; color: #fff; border: none;
+    padding: 8px 18px; cursor: pointer; font-family: inherit; font-size: 13px;
+    border-radius: 2px; font-weight: bold; letter-spacing: 1px;
+  }
+  .btn-novo:hover { background: #c73652; }
+  .filtro-status {
+    padding: 7px 10px; background: #0f3460; border: 1px solid #1a4a8a;
+    color: #fff; font-family: inherit; font-size: 12px; border-radius: 2px;
+  }
+
+  /* ── TABELA ── */
+  .tabela-wrap { background: #16213e; border: 1px solid #0f3460; border-radius: 4px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #0f3460; color: #aaa; font-size: 11px; padding: 10px 12px;
+    text-align: left; border-bottom: 1px solid #1a4a8a; letter-spacing: 1px;
+  }
+  tbody tr { border-bottom: 1px solid #1a2a4a; transition: background 0.1s; }
+  tbody tr:hover { background: #1a2a4a; }
+  tbody td { padding: 10px 12px; font-size: 13px; }
+  .badge-ativo   { background: #1a5c3a; color: #27ae60; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .badge-inativo { background: #2a1a1a; color: #888;    padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .badge-plano   { background: #0f3460; color: #66d9e8; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .api-key-cell { font-family: monospace; color: #888; font-size: 11px; }
+
+  .btn-acao-sm {
+    padding: 3px 10px; border-radius: 2px; font-size: 11px;
+    cursor: pointer; font-family: inherit; border: 1px solid;
+    margin: 1px; white-space: nowrap;
+  }
+  .btn-editar   { background: #0f3460; color: #66d9e8; border-color: #1a4a8a; }
+  .btn-editar:hover { background: #1a4a8a; }
+  .btn-apikey   { background: #1a3a1a; color: #27ae60; border-color: #27ae60; }
+  .btn-apikey:hover { background: #27ae60; color: #000; }
+  .btn-toggle   { background: #2a2a1a; color: #ffcc80; border-color: #856a00; }
+  .btn-toggle:hover { background: #856a00; color: #fff; }
+  .btn-excluir  { background: #2a0a0a; color: #e94560; border-color: #660000; }
+  .btn-excluir:hover { background: #e94560; color: #fff; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 100;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.ativo { display: flex; }
+  .modal {
+    background: #16213e; border: 2px solid #0f3460;
+    border-radius: 4px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-titulo {
+    background: #0f3460; padding: 12px 16px; color: #fff;
+    font-weight: bold; font-size: 14px; letter-spacing: 1px;
+    border-bottom: 1px solid #1a4a8a;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-fechar { cursor: pointer; color: #e94560; font-size: 18px; background: none; border: none; }
+  .modal-body { padding: 20px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { color: #888; font-size: 11px; letter-spacing: 1px; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px; background: #0f3460; border: 1px solid #1a4a8a;
+    color: #fff; font-family: inherit; font-size: 13px; border-radius: 2px;
+  }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .form-group input:focus, .form-group select:focus { border-color: #e94560; outline: none; }
+
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .btn-cancel {
+    padding: 9px 20px; background: #0f3460; color: #aaa; border: 1px solid #1a4a8a;
+    cursor: pointer; font-family: inherit; font-size: 13px; border-radius: 2px;
+  }
+
+  /* ── API KEY MODAL ── */
+  .apikey-box {
+    background: #0a0a1a; border: 1px solid #27ae60; border-radius: 3px;
+    padding: 12px 16px; font-family: monospace; font-size: 14px; color: #27ae60;
+    word-break: break-all; margin: 12px 0; text-align: center; letter-spacing: 1px;
+  }
+  .apikey-aviso { color: #e94560; font-size: 12px; text-align: center; margin-bottom: 8px; }
+
+  /* ── NOTIF ── */
+  #notif {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #0f3460; border: 1px solid #e94560; color: #fff;
+    padding: 10px 24px; border-radius: 4px; font-size: 13px;
+    opacity: 0; transition: opacity 0.3s; z-index: 999; pointer-events: none;
+  }
+  #notif.visivel { opacity: 1; }
+  #notif.ok   { border-color: #27ae60; background: #1a3a2a; }
+  #notif.erro { border-color: #e94560; background: #3a1a1a; }
+
+  /* ── VAZIO ── */
+  .empty-state {
+    text-align: center; padding: 48px; color: #555;
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #16213e; }
+  ::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="tela-login">
+  <div class="login-box">
+    <h1>ERP FLV</h1>
+    <p>Painel Administrativo — Empresas</p>
+    <input type="email" id="login-email" placeholder="Email" value="admin@loja.com">
+    <input type="password" id="login-senha" placeholder="Senha" value="admin123">
+    <button class="btn-primary" onclick="fazerLogin()">ENTRAR</button>
+    <div class="login-erro" id="login-erro"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="tela-admin">
+  <div class="topbar">
+    <div>
+      <div class="topbar-logo">ERP FLV — ADMIN</div>
+      <div class="topbar-sub">Gerenciamento de Empresas</div>
+    </div>
+    <div class="topbar-dir">
+      <span style="color:#888;font-size:12px" id="operador-nome"></span>
+      <a href="/" class="btn-pdv">← Ir para o PDV</a>
+      <button class="btn-sair" onclick="sair()">SAIR</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-label">TOTAL EMPRESAS</div>
+        <div class="stat-valor" id="stat-total">0</div>
+      </div>
+      <div class="stat-card ativas">
+        <div class="stat-label">ATIVAS</div>
+        <div class="stat-valor" id="stat-ativas">0</div>
+      </div>
+      <div class="stat-card inativas">
+        <div class="stat-label">INATIVAS</div>
+        <div class="stat-valor" id="stat-inativas">0</div>
+      </div>
+      <div class="stat-card planos">
+        <div class="stat-label">PLANO PREMIUM</div>
+        <div class="stat-valor" id="stat-premium">0</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-esq">
+        <h2>EMPRESAS CADASTRADAS</h2>
+        <select class="filtro-status" onchange="filtrar(this.value)">
+          <option value="">Todas</option>
+          <option value="true">Ativas</option>
+          <option value="false">Inativas</option>
+        </select>
+      </div>
+      <button class="btn-novo" onclick="abrirModalNovo()">+ NOVA EMPRESA</button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>CNPJ</th>
+            <th>Contato</th>
+            <th>Plano</th>
+            <th>API Key</th>
+            <th>Status</th>
+            <th>Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-empresas">
+          <tr><td colspan="8">
+            <div class="empty-state">
+              <div class="icon">🏢</div>
+              <div>Carregando empresas...</div>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CADASTRAR / EDITAR EMPRESA -->
+<div class="modal-overlay" id="modal-empresa">
+  <div class="modal">
+    <div class="modal-titulo">
+      <span id="modal-empresa-titulo">NOVA EMPRESA</span>
+      <button class="modal-fechar" onclick="fecharModal('modal-empresa')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="empresa-id">
+      <div class="form-row">
+        <div class="form-group" style="grid-column:span 2">
+          <label>NOME DA EMPRESA *</label>
+          <input type="text" id="emp-nome" placeholder="Ex: Mercado do João">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>CNPJ</label>
+          <input type="text" id="emp-cnpj" placeholder="00.000.000/0001-00">
+        </div>
+        <div class="form-group">
+          <label>TELEFONE</label>
+          <input type="text" id="emp-telefone" placeholder="(11) 99999-9999">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="grid-column:span 2">
+          <label>E-MAIL</label>
+          <input type="email" id="emp-email" placeholder="contato@empresa.com">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>CIDADE</label>
+          <input type="text" id="emp-cidade" placeholder="São Paulo">
+        </div>
+        <div class="form-group">
+          <label>ESTADO</label>
+          <select id="emp-estado">
+            <option value="">Selecione</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option selected>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>PLANO</label>
+          <select id="emp-plano">
+            <option value="basico">Básico</option>
+            <option value="profissional">Profissional</option>
+            <option value="premium">Premium</option>
+          </select>
+        </div>
+        <div class="form-group" id="grupo-ativo" style="display:none">
+          <label>STATUS</label>
+          <select id="emp-ativo">
+            <option value="true">Ativa</option>
+            <option value="false">Inativa</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>OBSERVAÇÃO</label>
+          <textarea id="emp-obs" placeholder="Notas internas sobre esta empresa..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="fecharModal('modal-empresa')">Cancelar</button>
+        <button class="btn-primary" style="width:auto;padding:9px 24px" onclick="salvarEmpresa()">SALVAR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: API KEY -->
+<div class="modal-overlay" id="modal-apikey">
+  <div class="modal" style="width:460px">
+    <div class="modal-titulo">
+      🔑 API KEY GERADA
+      <button class="modal-fechar" onclick="fecharModal('modal-apikey')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="apikey-aviso">⚠️ Copie agora! Esta chave não será exibida novamente.</p>
+      <div class="apikey-box" id="apikey-valor"></div>
+      <p style="color:#888;font-size:12px;text-align:center;margin-bottom:16px">
+        Use no header <code style="color:#66d9e8">X-N8N-Secret</code> ou como autenticação da instância
+      </p>
+      <button class="btn-primary" onclick="copiarApiKey()">📋 COPIAR API KEY</button>
+    </div>
+  </div>
+</div>
+
+<div id="notif"></div>
+
+<script>
+const API = '/api/v1';
+let token = localStorage.getItem('erp_token') || '';
+let usuario = JSON.parse(localStorage.getItem('erp_usuario') || 'null');
+let empresasCache = [];
+
+// ── Helpers ─────────────────────────────────────────────────
+async function api(method, path, body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  if (r.status === 401) { sair(); return null; }
+  if (r.status === 204) return null;
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail || 'Erro desconhecido');
+  return data;
+}
+
+function notif(msg, tipo = 'ok', ms = 3500) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = `visivel ${tipo}`;
+  clearTimeout(notif._t);
+  notif._t = setTimeout(() => el.className = '', ms);
+}
+
+function fecharModal(id) { document.getElementById(id).classList.remove('ativo'); }
+function abrirModal(id)  { document.getElementById(id).classList.add('ativo'); }
+
+function fmtData(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('pt-BR');
+}
+
+// ── Login ────────────────────────────────────────────────────
+async function fazerLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  document.getElementById('login-erro').textContent = '';
+  try {
+    const r = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || 'Credenciais inválidas');
+    if (data.usuario?.perfil !== 'admin') throw new Error('Acesso restrito a administradores');
+    token = data.access_token;
+    usuario = data.usuario;
+    localStorage.setItem('erp_token', token);
+    localStorage.setItem('erp_usuario', JSON.stringify(usuario));
+    entrarNoAdmin();
+  } catch(e) {
+    document.getElementById('login-erro').textContent = e.message;
+  }
+}
+
+async function entrarNoAdmin() {
+  if (usuario?.perfil !== 'admin') {
+    document.getElementById('login-erro').textContent = 'Acesso restrito a administradores';
+    return;
+  }
+  document.getElementById('tela-login').style.display = 'none';
+  document.getElementById('tela-admin').style.display = 'flex';
+  document.getElementById('operador-nome').textContent = '👤 ' + (usuario?.nome || '');
+  await carregarEmpresas();
+}
+
+// ── Empresas ─────────────────────────────────────────────────
+async function carregarEmpresas(apenasAtivo = null) {
+  try {
+    let url = '/empresas';
+    if (apenasAtivo !== null) url += `?ativo=${apenasAtivo}`;
+    empresasCache = await api('GET', url) || [];
+    renderTabela(empresasCache);
+    atualizarStats(empresasCache);
+  } catch(e) {
+    notif('Erro ao carregar empresas: ' + e.message, 'erro');
+  }
+}
+
+function atualizarStats(empresas) {
+  const ativas   = empresas.filter(e => e.ativo).length;
+  const inativas = empresas.filter(e => !e.ativo).length;
+  const premium  = empresas.filter(e => e.plano === 'premium').length;
+  document.getElementById('stat-total').textContent    = empresas.length;
+  document.getElementById('stat-ativas').textContent   = ativas;
+  document.getElementById('stat-inativas').textContent = inativas;
+  document.getElementById('stat-premium').textContent  = premium;
+}
+
+function renderTabela(empresas) {
+  const tbody = document.getElementById('tbody-empresas');
+  if (!empresas.length) {
+    tbody.innerHTML = `<tr><td colspan="8">
+      <div class="empty-state">
+        <div class="icon">🏢</div>
+        <div>Nenhuma empresa cadastrada ainda</div>
+      </div>
+    </td></tr>`;
+    return;
+  }
+
+  const planoCor = { basico: '#888', profissional: '#66d9e8', premium: '#ffcc80' };
+
+  tbody.innerHTML = empresas.map(e => `
+    <tr>
+      <td>
+        <div style="color:#fff;font-weight:bold">${e.nome}</div>
+        ${e.cidade ? `<div style="color:#666;font-size:11px">${e.cidade}${e.estado ? ' — ' + e.estado : ''}</div>` : ''}
+      </td>
+      <td style="color:#aaa;font-size:12px">${e.cnpj || '—'}</td>
+      <td style="font-size:12px">
+        ${e.telefone ? `<div style="color:#aaa">${e.telefone}</div>` : ''}
+        ${e.email    ? `<div style="color:#666;font-size:11px">${e.email}</div>` : ''}
+        ${!e.telefone && !e.email ? '<span style="color:#444">—</span>' : ''}
+      </td>
+      <td><span class="badge-plano" style="color:${planoCor[e.plano]||'#888'}">${e.plano}</span></td>
+      <td class="api-key-cell">${e.api_key ? e.api_key.substring(0,12) + '••••••••' : '—'}</td>
+      <td><span class="${e.ativo ? 'badge-ativo' : 'badge-inativo'}">${e.ativo ? 'Ativa' : 'Inativa'}</span></td>
+      <td style="color:#888;font-size:11px">${fmtData(e.criado_em)}</td>
+      <td>
+        <button class="btn-acao-sm btn-editar"  onclick="abrirModalEditar('${e.id}')">Editar</button>
+        <button class="btn-acao-sm btn-apikey"  onclick="gerarApiKey('${e.id}')">🔑 API Key</button>
+        <button class="btn-acao-sm btn-toggle"  onclick="toggleAtivo('${e.id}', ${e.ativo})">${e.ativo ? 'Desativar' : 'Ativar'}</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filtrar(val) {
+  if (val === '') carregarEmpresas();
+  else carregarEmpresas(val === 'true');
+}
+
+// ── Modal Novo / Editar ──────────────────────────────────────
+function limparForm() {
+  ['empresa-id','emp-nome','emp-cnpj','emp-telefone','emp-email','emp-cidade','emp-obs'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('emp-estado').value = 'SP';
+  document.getElementById('emp-plano').value  = 'basico';
+  document.getElementById('emp-ativo').value  = 'true';
+}
+
+function abrirModalNovo() {
+  limparForm();
+  document.getElementById('modal-empresa-titulo').textContent = 'NOVA EMPRESA';
+  document.getElementById('grupo-ativo').style.display = 'none';
+  abrirModal('modal-empresa');
+  setTimeout(() => document.getElementById('emp-nome').focus(), 100);
+}
+
+function abrirModalEditar(id) {
+  const e = empresasCache.find(x => x.id === id);
+  if (!e) return;
+  limparForm();
+  document.getElementById('modal-empresa-titulo').textContent = 'EDITAR EMPRESA';
+  document.getElementById('empresa-id').value  = e.id;
+  document.getElementById('emp-nome').value    = e.nome || '';
+  document.getElementById('emp-cnpj').value    = e.cnpj || '';
+  document.getElementById('emp-telefone').value= e.telefone || '';
+  document.getElementById('emp-email').value   = e.email || '';
+  document.getElementById('emp-cidade').value  = e.cidade || '';
+  document.getElementById('emp-estado').value  = e.estado || '';
+  document.getElementById('emp-plano').value   = e.plano || 'basico';
+  document.getElementById('emp-ativo').value   = String(e.ativo);
+  document.getElementById('emp-obs').value     = e.observacao || '';
+  document.getElementById('grupo-ativo').style.display = 'flex';
+  abrirModal('modal-empresa');
+}
+
+async function salvarEmpresa() {
+  const id   = document.getElementById('empresa-id').value;
+  const nome = document.getElementById('emp-nome').value.trim();
+  if (!nome) { notif('Informe o nome da empresa', 'erro'); return; }
+
+  const payload = {
+    nome,
+    cnpj:      document.getElementById('emp-cnpj').value.trim()     || null,
+    telefone:  document.getElementById('emp-telefone').value.trim() || null,
+    email:     document.getElementById('emp-email').value.trim()    || null,
+    cidade:    document.getElementById('emp-cidade').value.trim()   || null,
+    estado:    document.getElementById('emp-estado').value          || null,
+    plano:     document.getElementById('emp-plano').value,
+    observacao:document.getElementById('emp-obs').value.trim()      || null,
+  };
+
+  if (id) payload.ativo = document.getElementById('emp-ativo').value === 'true';
+
+  try {
+    if (id) {
+      await api('PUT', `/empresas/${id}`, payload);
+      notif('✓ Empresa atualizada', 'ok');
+    } else {
+      const nova = await api('POST', '/empresas', payload);
+      notif('✓ Empresa cadastrada', 'ok');
+      // Mostra a API key da nova empresa
+      if (nova?.api_key) mostrarApiKey(nova.api_key);
+    }
+    fecharModal('modal-empresa');
+    await carregarEmpresas();
+  } catch(e) {
+    notif('Erro: ' + e.message, 'erro');
+  }
+}
+
+// ── API Key ──────────────────────────────────────────────────
+async function gerarApiKey(id) {
+  if (!confirm('Gerar uma nova API Key? A chave anterior será invalidada.')) return;
+  try {
+    const r = await api('POST', `/empresas/${id}/gerar-api-key`);
+    mostrarApiKey(r.api_key);
+    await carregarEmpresas();
+    notif('✓ Nova API Key gerada', 'ok');
+  } catch(e) {
+    notif('Erro: ' + e.message, 'erro');
+  }
+}
+
+function mostrarApiKey(key) {
+  document.getElementById('apikey-valor').textContent = key;
+  abrirModal('modal-apikey');
+}
+
+function copiarApiKey() {
+  const key = document.getElementById('apikey-valor').textContent;
+  navigator.clipboard.writeText(key).then(() => notif('✓ API Key copiada!', 'ok'));
+}
+
+// ── Toggle ativo ─────────────────────────────────────────────
+async function toggleAtivo(id, atual) {
+  const acao = atual ? 'desativar' : 'ativar';
+  if (!confirm(`Deseja ${acao} esta empresa?`)) return;
+  try {
+    await api('PUT', `/empresas/${id}`, { ativo: !atual });
+    notif(`✓ Empresa ${atual ? 'desativada' : 'ativada'}`, 'ok');
+    await carregarEmpresas();
+  } catch(e) {
+    notif('Erro: ' + e.message, 'erro');
+  }
+}
+
+// ── Sair ─────────────────────────────────────────────────────
+function sair() {
+  localStorage.removeItem('erp_token');
+  localStorage.removeItem('erp_usuario');
+  token = ''; usuario = null;
+  document.getElementById('tela-admin').style.display = 'none';
+  document.getElementById('tela-login').style.display = 'flex';
+}
+
+// ── Teclado ──────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.ativo').forEach(m => m.classList.remove('ativo'));
+  }
+  if (e.key === 'Enter' && document.getElementById('tela-login').style.display !== 'none') {
+    fazerLogin();
+  }
+});
+
+// ── Init ─────────────────────────────────────────────────────
+(async () => {
+  if (token && usuario?.perfil === 'admin') {
+    await entrarNoAdmin();
+  }
+})();
+</script>
+</body>
+</html>

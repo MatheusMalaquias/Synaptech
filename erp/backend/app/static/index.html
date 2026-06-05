@@ -436,6 +436,9 @@
     </div>
     <div class="topbar-dir">
       <div class="topbar-operador" id="operador-nome"></div>
+      <a id="link-admin" href="/empresas" style="display:none;background:#0f3460;color:#aaa;border:1px solid #1a4a8a;padding:4px 12px;font-size:12px;border-radius:2px;text-decoration:none;font-family:inherit">
+        🏢 Empresas
+      </a>
       <button class="btn-sair" onclick="sair()">SAIR</button>
     </div>
   </div>
@@ -511,6 +514,9 @@
       </button>
       <button class="btn-acao" onclick="iniciarPagamento('credito')">
         <span class="tecla">D</span> Cartão Crédito
+      </button>
+      <button class="btn-acao" onclick="iniciarPagamento('voucher')">
+        <span class="tecla">V</span> Voucher
       </button>
 
       <div class="divisor"></div>
@@ -642,6 +648,9 @@
         </button>
         <button class="btn-forma" id="btn-credito"  onclick="selecionarForma('credito')">
           <span class="icone">💳</span>Crédito
+        </button>
+        <button class="btn-forma" id="btn-voucher"  onclick="selecionarForma('voucher')">
+          <span class="icone">🎟</span>Voucher
         </button>
       </div>
 
@@ -910,6 +919,9 @@ async function entrarNoPDV() {
   document.getElementById('tela-login').style.display = 'none';
   document.getElementById('tela-pdv').style.display = 'flex';
   document.getElementById('operador-nome').textContent = '👤 ' + (usuario?.nome || '');
+  if (usuario?.perfil === 'admin') {
+    document.getElementById('link-admin').style.display = 'inline-block';
+  }
   await verificarSessao();
 }
 
@@ -1136,7 +1148,7 @@ function iniciarPagamento(forma) {
   formaPagamento = forma;
   document.getElementById('pag-total').textContent = fmtBRL(vendaAtual.total_final);
 
-  ['pix','dinheiro','debito','credito'].forEach(f => {
+  ['pix','dinheiro','debito','credito','voucher'].forEach(f => {
     document.getElementById('btn-' + f)?.classList.remove('ativo');
   });
   document.getElementById('btn-' + forma)?.classList.add('ativo');
@@ -1151,7 +1163,7 @@ function iniciarPagamento(forma) {
 
 function selecionarForma(forma) {
   formaPagamento = forma;
-  ['pix','dinheiro','debito','credito'].forEach(f => {
+  ['pix','dinheiro','debito','credito','voucher'].forEach(f => {
     document.getElementById('btn-' + f)?.classList.remove('ativo');
   });
   document.getElementById('btn-' + forma)?.classList.add('ativo');
@@ -1183,7 +1195,7 @@ async function finalizarVenda() {
 
     // Mostra tela de sucesso
     const troco = Math.max(0, valor - parseFloat(r.total_final));
-    const nomes = { pix: 'PIX', dinheiro: 'Dinheiro', debito: 'Cartão Débito', credito: 'Cartão Crédito' };
+    const nomes = { pix: 'PIX', dinheiro: 'Dinheiro', debito: 'Cartão Débito', credito: 'Cartão Crédito', voucher: 'Voucher' };
     document.getElementById('suc-venda').textContent = `Venda #${r.numero} finalizada!`;
     document.getElementById('suc-total').textContent = fmtBRL(r.total_final);
     document.getElementById('suc-forma').textContent = nomes[formaPagamento] || formaPagamento;
@@ -1496,6 +1508,7 @@ document.addEventListener('keydown', e => {
   if (e.key.toLowerCase() === 'x' && !e.ctrlKey) iniciarPagamento('pix');
   if (e.key.toLowerCase() === 'e' && !e.ctrlKey) iniciarPagamento('debito');
   if (e.key.toLowerCase() === 'd' && !e.ctrlKey) iniciarPagamento('credito');
+  if (e.key.toLowerCase() === 'v' && !e.ctrlKey) iniciarPagamento('voucher');
 });
 
 // ── INICIALIZAÇÃO ─────────────────────────────────────────────
