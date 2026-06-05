@@ -62,7 +62,7 @@ app.add_middleware(
 
 # ── Routers ───────────────────────────────────────────────────────────────────
 from app.api.v1.routes import (  # noqa: E402
-    auth, caixa, empresas, estoque, n8n_integration, produtos, vendas, webhooks,
+    auth, caixa, estoque, n8n_integration, produtos, vendas, webhooks,
 )
 
 API_PREFIX = "/api/v1"
@@ -74,7 +74,6 @@ app.include_router(caixa.router,           prefix=API_PREFIX + "/caixa",     tag
 app.include_router(vendas.router,          prefix=API_PREFIX + "/vendas",    tags=["Vendas"])
 app.include_router(webhooks.router,        prefix=API_PREFIX + "/webhooks",  tags=["Webhooks"])
 app.include_router(n8n_integration.router, prefix=API_PREFIX + "/n8n",      tags=["Integração n8n"])
-app.include_router(empresas.router,        prefix=API_PREFIX + "/empresas",  tags=["Empresas"])
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
@@ -92,10 +91,6 @@ async def frontend():
     """Serve o PDV frontend."""
     return FileResponse(_STATIC / "index.html")
 
-@app.get("/empresas", include_in_schema=False)
-async def frontend_empresas():
-    """Serve o painel de gerenciamento de empresas."""
-    return FileResponse(_STATIC / "empresas.html")
 
 # Monta arquivos estáticos adicionais (css/js externos se necessário)
 if _STATIC.exists():
