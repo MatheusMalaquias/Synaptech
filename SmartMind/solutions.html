@@ -1,73 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools - SmartMind - Intelligent Solutions</title>
-    <meta name="description" content="Explore our AI tools and intelligent solutions at SmartMind. Discover the best artificial intelligence platforms.">
-    <meta name="author" content="Matheus O. Malaquias">
-    <meta property="og:title" content="Our Tools - SmartMind">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://matheusmalaquias.github.io/wdd231/smartmind/images/smartmindlogo.webp">
-    <meta property="og:url" content="https://matheusmalaquias.github.io/wdd231/smartmind/index.html">
-    <meta property="og:description" content="Find the perfect AI tool for you. Explore our complete directory and learn more about each platform we offer.">
-    <link rel="icon" href="images/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles/styles.css">
-    <link rel="stylesheet" href="./styles/larger.css">
-    <script src="scripts/main.js" type="module"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solutions - SmartMind</title>
+  <meta name="description" content="Explore SmartMind's AI automation, workflow, integration, and data intelligence solutions.">
+  <meta name="author" content="Matheus O. Malaquias">
+  <meta property="og:title" content="Our Solutions - SmartMind">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="images/smartmindlogo.webp">
+  <link rel="icon" href="images/smartmindlogo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/larger.css">
+  <script src="scripts/main.js" type="module"></script>
 </head>
-
 <body id="modalities-page">
-    <header>
-        <a href="index.html" class="logo">
-            <img src="./images/smartmindsquare.png" alt="SmartMind Logo" width="80" height="80">
-            <h1>SmartMind - Intelligent Solutions</h1>
-        </a>
-        <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
-        <nav>
-            <ul id="nav-menu">
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="solutions.html">Solutions</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <main>
-        <section class="page-title">
-            <h2 class="tech-text-glow">Our Solutions</h2>
-            <p>Explore the automation, AI, integration, and business intelligence
-            solutions offered by SmartMind.
-            </p>
-        </section>
-        
-        <div id="class-schedule-container" class="schedule-grid">
-            <!-- Class cards will be dynamically inserted here by JavaScript -->
-        </div>
-    </main>
+  <header>
+    <a href="index.html" class="logo">
+      <img src="images/smartmindsquare.png" alt="SmartMind Logo" width="60" height="60">
+      <h1>SmartMind - Intelligent Solutions</h1>
+    </a>
+    <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
+    <nav>
+      <ul id="nav-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="solutions.html" class="active">Solutions</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <dialog id="class-details-modal">
-        <div class="modal-content">
-            <button id="modal-close-button">&times;</button>
-            <img id="modal-img" src="images/placeholder.png" alt="AI Tool Image">
-            <h3 id="modal-title">Select a solution</h3>
-            <p><strong>Business Impact:</strong> <span id="modal-business-impact"></span></p>
-            <p><strong>Rating:</strong> <span id="modal-rating"></span></p>
-            <p><strong>Industry:</strong> <span id="modal-industry"></span></p>
-            <p><strong>Technology:</strong> <span id="modal-technology"></span></p>
-            <p><strong>Benefit:</strong> <span id="modal-benefit"></span></p>
-            <p id="modal-description">Select a solution to learn more.</p>
-        </div>
-    </dialog>
+  <main>
 
-    <footer>
-        <p>&copy; <span id="current-year"></span>SmartMind | AI Automation & Business Intelligence | Matheus O. Malaquias</p>
-    </footer>
+    <section class="page-title">
+      <h2 class="tech-text-glow">Our Solutions</h2>
+      <p>Explore the automation, AI, integration, and business intelligence
+         solutions offered by SmartMind. Click any card to learn more.</p>
+    </section>
+
+    <!-- filter bar injected by JS -->
+
+    <div id="class-schedule-container" class="schedule-grid">
+      <!-- cards injected by JS -->
+    </div>
+
+  </main>
+
+  <!-- MODAL -->
+  <dialog id="class-details-modal" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button id="modal-close-button" aria-label="Close">&times;</button>
+      <img id="modal-img" src="images/placeholder.png" alt="">
+      <h3 id="modal-title">Select a solution</h3>
+      <p><strong>Business Impact:</strong> <span id="modal-business-impact"></span></p>
+      <p><strong>Rating:</strong>          <span id="modal-rating"></span></p>
+      <p><strong>Industry:</strong>        <span id="modal-industry"></span></p>
+      <p><strong>Technology:</strong>      <span id="modal-technology"></span></p>
+      <p><strong>Benefit:</strong>         <span id="modal-benefit"></span></p>
+      <p id="modal-description">Select a solution to learn more.</p>
+    </div>
+  </dialog>
+
+  <footer>
+    <p>&copy; <span id="current-year"></span>SmartMind | AI Automation &amp; Business Intelligence | Matheus O. Malaquias</p>
+  </footer>
 
 </body>
-
 </html>
