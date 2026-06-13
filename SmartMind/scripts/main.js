@@ -32,7 +32,7 @@ if (container && modal) {
   // ── Fetch & render ──
   async function loadSolutions() {
     try {
-      const res  = await fetch('data/solutions.json');
+      const res  = await fetch('./data/solutions.json');
       const data = await res.json();
       allSolutions = data;
       buildFilterBar(data);
