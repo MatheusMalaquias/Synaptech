@@ -19,7 +19,7 @@
     "description": "Automate repetitive tasks and connect processes across teams, departments, and software platforms.",
     "benefit": "Reduce manual work and improve productivity.",
     "technology": "n8n, Make, Zapier",
-    "image": "./images/workflow.jpg"
+    "image": "./images/workflow.png"
   },
   {
     "id": 3,
@@ -30,7 +30,7 @@
     "description": "Connect CRMs, databases, spreadsheets, communication platforms, and business applications into a unified ecosystem.",
     "benefit": "Eliminate data silos and improve information flow.",
     "technology": "APIs, Webhooks, ERP Systems",
-    "image": "./images/system.jpg"
+    "image": "./images/system.png"
   },
   {
     "id": 4,
@@ -41,7 +41,7 @@
     "description": "Transform raw business data into actionable insights through dashboards, reporting, and AI-powered analytics.",
     "benefit": "Support faster and more accurate decision-making.",
     "technology": "Power BI, Looker Studio, SQL",
-    "image": "./images/data.jpg"
+    "image": "./images/data.png"
   },
   {
     "id": 5,
@@ -52,7 +52,7 @@
     "description": "Automate ticket handling, customer communication, and support workflows using AI-powered systems.",
     "benefit": "Improve customer satisfaction while reducing support costs.",
     "technology": "AI Chatbots, CRM Integration",
-    "image": "images/support.jpg"
+    "image": "images/support.png"
   },
   {
     "id": 6,
@@ -63,6 +63,6 @@
     "description": "Automate lead qualification, follow-up sequences, pipeline management, and sales reporting.",
     "benefit": "Increase conversion rates and reduce administrative work.",
     "technology": "CRM, AI Agents, Automation Platforms",
-    "image": "images/sales.jpg"
+    "image": "images/sales.png"
   }
 ]
