@@ -8,7 +8,7 @@
     "description": "Custom AI assistants that automate customer interactions, qualify leads, answer frequently asked questions, and support internal operations.",
     "benefit": "Reduce response times and increase operational efficiency.",
     "technology": "OpenAI, Claude, Gemini",
-    "image": "images/ai-agent.jpg"
+    "image": "./images/ai.png"
   },
   {
     "id": 2,
@@ -19,7 +19,7 @@
     "description": "Automate repetitive tasks and connect processes across teams, departments, and software platforms.",
     "benefit": "Reduce manual work and improve productivity.",
     "technology": "n8n, Make, Zapier",
-    "image": "images/automation.jpg"
+    "image": "./images/workflow.jpg"
   },
   {
     "id": 3,
@@ -30,7 +30,7 @@
     "description": "Connect CRMs, databases, spreadsheets, communication platforms, and business applications into a unified ecosystem.",
     "benefit": "Eliminate data silos and improve information flow.",
     "technology": "APIs, Webhooks, ERP Systems",
-    "image": "images/integration.jpg"
+    "image": "./images/system.jpg"
   },
   {
     "id": 4,
@@ -41,7 +41,7 @@
     "description": "Transform raw business data into actionable insights through dashboards, reporting, and AI-powered analytics.",
     "benefit": "Support faster and more accurate decision-making.",
     "technology": "Power BI, Looker Studio, SQL",
-    "image": "images/data.jpg"
+    "image": "./images/data.jpg"
   },
   {
     "id": 5,
