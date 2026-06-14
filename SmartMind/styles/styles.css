@@ -260,7 +260,6 @@ main {
     border-radius: 8px;
     overflow: hidden;
     text-align: left;
-    padding: 1.5rem;
     transition: border-color 0.2s ease, transform 0.2s ease;
 }
 .modality-card:hover {
@@ -268,20 +267,18 @@ main {
     transform: translateY(-3px);
 }
 .modality-card img {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    margin-bottom: 0.75rem;
-    filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.4));
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
 }
 .modality-card h3 {
-    margin-bottom: 0.5rem;
+    margin: 1rem 1.5rem 0.5rem 1.5rem;
     text-transform: uppercase;
     font-size: 1.1rem;
 }
 .modality-card p {
     color: var(--text-muted);
-    margin: 0;
+    margin: 0 1.5rem 1.5rem 1.5rem;
 }
 
 /* ── MISSION & VISION ── */
