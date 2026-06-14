@@ -7,6 +7,7 @@ if (menuBtn && navMenu) {
   menuBtn.innerHTML = '<span></span>';
   menuBtn.addEventListener('click', () => {
     navMenu.classList.toggle('open');
+    menuBtn.classList.toggle('open');
   });
 }
 
@@ -38,7 +39,7 @@ if (container && modal) {
       buildFilterBar(data);
       renderCards(data);
     } catch (err) {
-      container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem;">Could not load solutions.</p>';
+      container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">Could not load solutions.</p>';
     }
   }
 
@@ -69,7 +70,7 @@ if (container && modal) {
   function renderCards(solutions) {
     container.innerHTML = '';
     if (!solutions.length) {
-      container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem;grid-column:1/-1;">No solutions found.</p>';
+      container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;grid-column:1/-1;">No solutions found.</p>';
       return;
     }
     solutions.forEach(s => {
@@ -118,7 +119,7 @@ if (container && modal) {
 }
 
 // ── Thank-you page: display submitted params ──
-if (document.querySelector('.thank-you-section')) {
+if (document.querySelector('.thankyou-section')) {
   const params = new URLSearchParams(location.search);
   const nameEl = document.getElementById('submitted-name');
   const svcEl  = document.getElementById('submitted-service');

@@ -31,4 +31,10 @@
     .hero-text p {
         font-size: 1rem;
     }
+    .modalities-grid {
+        grid-template-columns: 1fr;
+    }
+    .mission-vision {
+        flex-direction: column;
+    }
 }
