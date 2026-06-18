@@ -561,3 +561,20 @@ footer {
     color: var(--accent-light);
     text-decoration: underline;
 }
+
+#repo-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+#repo-container div {
+  padding: 1rem;
+  border-radius: 12px;
+  background: #fff;
+  transition: transform 0.3s ease;
+}
+
+#repo-container div:hover {
+  transform: translateY(-5px);
+}

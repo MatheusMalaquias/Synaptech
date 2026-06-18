@@ -126,3 +126,34 @@ if (document.querySelector('.thankyou-section')) {
   if (nameEl && params.get('fullName')) nameEl.textContent = params.get('fullName');
   if (svcEl  && params.get('interest'))  svcEl.textContent  = params.get('interest').replace(/-/g, ' ');
 }
+
+async function loadGithubRepos() {
+  try {
+    const response = await fetch(
+      "https://api.github.com/users/MatheusMalaquias/repos"
+    );
+
+    const repos = await response.json();
+
+    const container = document.getElementById("repo-container");
+
+    repos.slice(0, 6).forEach(repo => {
+      const card = document.createElement("div");
+
+      card.innerHTML = `
+        <h3>${repo.name}</h3>
+        <p>${repo.description || "No description available"}</p>
+        <a href="${repo.html_url}" target="_blank">
+          View Repository
+        </a>
+      `;
+
+      container.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Error loading repositories:", error);
+  }
+}
+
+loadGithubRepos();
