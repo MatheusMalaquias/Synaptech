@@ -52,7 +52,7 @@
     "description": "Automate ticket handling, customer communication, and support workflows using AI-powered systems.",
     "benefit": "Improve customer satisfaction while reducing support costs.",
     "technology": "AI Chatbots, CRM Integration",
-    "image": "images/support.png"
+    "image": "./images/suport.png"
   },
   {
     "id": 6,
@@ -63,6 +63,6 @@
     "description": "Automate lead qualification, follow-up sequences, pipeline management, and sales reporting.",
     "benefit": "Increase conversion rates and reduce administrative work.",
     "technology": "CRM, AI Agents, Automation Platforms",
-    "image": "images/sales.png"
+    "image": "./images/sales.png"
   }
 ]
