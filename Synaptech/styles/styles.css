@@ -578,3 +578,28 @@ footer {
 #repo-container div:hover {
   transform: translateY(-5px);
 }
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.lang-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-family: var(--paragraph-font);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lang-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-light);
+}

@@ -6,38 +6,37 @@
   <title>Contact Synaptech | AI Automation & Business Intelligence</title>
   <meta name="description" content="Contact Synaptech to discuss AI automation, system integrations, business intelligence, and operational solutions for your company.">
   <meta name="author" content="Matheus O. Malaquias">
-  <meta property="og:title" content="Contact Synaptech">
-  <meta property="og:type" content="website">
-  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/synaptech.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="stylesheet" href="styles/larger.css">
-  <script src="scripts/main.js" type="module"></script>
+  <script src="scripts/main.js" defer></script>
 </head>
 <body>
 
   <header>
     <a href="index.html" class="logo">
-      <img src="./images/synaptech.png" alt="Synaptech Logo" width="60" height="60">
+      <img src="./images/synaptech.png" alt="Synaptech Logo" width="50" height="50">
       <h1>Synaptech</h1>
     </a>
     <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
     <nav>
       <ul id="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="solutions.html">Solutions</a></li>
-        <li><a href="contact.html" class="active">Contact</a></li>
+        <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+        <li><a href="solutions.html" data-i18n="nav_solutions">Solutions</a></li>
+        <li><a href="contact.html" class="active" data-i18n="nav_contact">Contact</a></li>
       </ul>
+      <button id="lang-toggle" class="lang-btn" aria-label="Toggle language">🇧🇷 PT</button>
     </nav>
   </header>
 
   <main>
 
     <section class="page-title">
-      <h2>Let's Discuss Your Business Goals</h2>
-      <p>Whether you're looking to automate workflows, improve customer support,
+      <h2 data-i18n="contact_page_title">Let's Discuss Your Business Goals</h2>
+      <p data-i18n="contact_page_desc">Whether you're looking to automate workflows, improve customer support,
          integrate business systems, or gain better insights from your data,
          Synaptech can help.</p>
     </section>
@@ -46,49 +45,50 @@
       <form action="thankyou.html" method="get">
 
         <fieldset>
-          <legend>Your Information</legend>
+          <legend data-i18n="form_legend1">Your Information</legend>
 
-          <label for="company">Company Name</label>
-          <input type="text" id="company" name="company" placeholder="Acme Corp">
+          <label for="company" data-i18n="form_company">Company Name</label>
+          <input type="text" id="company" name="company" data-i18n="form_company" placeholder="Acme Corp">
 
-          <label for="fullName">Full Name *</label>
+          <label for="fullName" data-i18n="form_name">Full Name *</label>
           <input type="text" id="fullName" name="fullName" required placeholder="Jane Smith">
 
-          <label for="email">Email *</label>
+          <label for="email" data-i18n="form_email">Email *</label>
           <input type="email" id="email" name="email" required placeholder="jane@example.com">
 
-          <label for="phone">Phone Number</label>
+          <label for="phone" data-i18n="form_phone">Phone Number</label>
           <input type="tel" id="phone" name="phone" placeholder="123-456-7890">
         </fieldset>
 
         <fieldset>
-          <legend>Your Message</legend>
+          <legend data-i18n="form_legend2">Your Message</legend>
 
-          <label for="interest">I'm interested in…</label>
+          <label for="interest" data-i18n="form_interest">I'm interested in…</label>
           <select id="interest" name="interest">
-            <option value="" disabled selected>Select a Service</option>
-            <option value="ai-agents">AI Agents</option>
-            <option value="workflow-automation">Workflow Automation</option>
-            <option value="system-integrations">System Integrations</option>
-            <option value="data-intelligence">Data Intelligence</option>
-            <option value="customer-support">Customer Support Automation</option>
-            <option value="sales-optimization">Sales Process Optimization</option>
-            <option value="consultation">General Consultation</option>
+            <option value="" disabled selected data-i18n="form_select">Select a Service</option>
+            <option value="ai-agents" data-i18n="form_opt1">AI Agents</option>
+            <option value="workflow-automation" data-i18n="form_opt2">Workflow Automation</option>
+            <option value="system-integrations" data-i18n="form_opt3">System Integrations</option>
+            <option value="data-intelligence" data-i18n="form_opt4">Data Intelligence</option>
+            <option value="customer-support" data-i18n="form_opt5">Customer Support Automation</option>
+            <option value="sales-optimization" data-i18n="form_opt6">Sales Process Optimization</option>
+            <option value="consultation" data-i18n="form_opt7">General Consultation</option>
           </select>
 
-          <label for="message">Tell us about your business needs *</label>
+          <label for="message" data-i18n="form_message">Tell us about your business needs *</label>
           <textarea id="message" name="message" rows="6" required
+            data-i18n="form_placeholder"
             placeholder="Describe your current challenges, goals, or processes you would like to automate."></textarea>
         </fieldset>
 
-        <button type="submit" class="cta-button">Request Consultation</button>
+        <button type="submit" class="cta-button" data-i18n="form_submit">Request Consultation</button>
       </form>
     </section>
 
   </main>
 
   <footer>
-    <p>&copy; <span id="current-year"></span>Synaptech | AI Automation &amp; Business Intelligence | Matheus O. Malaquias</p>
+    <p>&copy; <span id="current-year"></span> Synaptech | AI Automation &amp; Business Intelligence | Matheus O. Malaquias</p>
   </footer>
 
 </body>

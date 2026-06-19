@@ -6,47 +6,41 @@
   <title>Solutions - Synaptech</title>
   <meta name="description" content="Explore Synaptech's AI automation, workflow, integration, and data intelligence solutions.">
   <meta name="author" content="Matheus O. Malaquias">
-  <meta property="og:title" content="Our Solutions - Synaptech">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="images/synaptechlogo.svg">
-  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="images/synaptech.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="stylesheet" href="styles/larger.css">
-  <script src="scripts/main.js" type="module"></script>
+  <script src="scripts/main.js" defer></script>
 </head>
 <body id="modalities-page">
 
   <header>
     <a href="index.html" class="logo">
-      <img src="./images/synaptech.png" alt="Synaptech Logo" width="60" height="60">
+      <img src="./images/synaptech.png" alt="Synaptech Logo" width="50" height="50">
       <h1>Synaptech</h1>
     </a>
     <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
     <nav>
       <ul id="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="solutions.html" class="active">Solutions</a></li>
-        <li><a href="contact.html">Contact</a></li>
+        <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+        <li><a href="solutions.html" class="active" data-i18n="nav_solutions">Solutions</a></li>
+        <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
       </ul>
+      <button id="lang-toggle" class="lang-btn" aria-label="Toggle language">🇧🇷 PT</button>
     </nav>
   </header>
 
   <main>
 
     <section class="page-title">
-      <h2>Our Solutions</h2>
-      <p>Explore the automation, AI, integration, and business intelligence
+      <h2 data-i18n="solutions_page_title">Our Solutions</h2>
+      <p data-i18n="solutions_page_desc">Explore the automation, AI, integration, and business intelligence
          solutions offered by Synaptech. Click any card to learn more.</p>
     </section>
 
-    <!-- filter bar injected by JS -->
-
-    <div id="class-schedule-container" class="schedule-grid">
-      <!-- cards injected by JS -->
-    </div>
+    <div id="class-schedule-container" class="schedule-grid"></div>
 
   </main>
 
@@ -54,19 +48,19 @@
   <dialog id="class-details-modal" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-content">
       <button id="modal-close-button" aria-label="Close">&times;</button>
-      <img id="modal-img" src="images/placeholder.png" alt="">
+      <img id="modal-img" src="images/synaptech.png" alt="">
       <h3 id="modal-title">Select a solution</h3>
-      <p><strong>Business Impact:</strong> <span id="modal-business-impact"></span></p>
-      <p><strong>Rating:</strong>          <span id="modal-rating"></span></p>
-      <p><strong>Industry:</strong>        <span id="modal-industry"></span></p>
-      <p><strong>Technology:</strong>      <span id="modal-technology"></span></p>
-      <p><strong>Benefit:</strong>         <span id="modal-benefit"></span></p>
-      <p id="modal-description">Select a solution to learn more.</p>
+      <p><strong data-i18n="modal_impact">Business Impact:</strong> <span id="modal-business-impact"></span></p>
+      <p><strong data-i18n="modal_rating">Rating:</strong> <span id="modal-rating"></span></p>
+      <p><strong data-i18n="modal_industry">Industry:</strong> <span id="modal-industry"></span></p>
+      <p><strong data-i18n="modal_technology">Technology:</strong> <span id="modal-technology"></span></p>
+      <p><strong data-i18n="modal_benefit">Benefit:</strong> <span id="modal-benefit"></span></p>
+      <p id="modal-description"></p>
     </div>
   </dialog>
 
   <footer>
-    <p>&copy; <span id="current-year"></span>Synaptech | AI Automation &amp; Business Intelligence | Matheus O. Malaquias</p>
+    <p>&copy; <span id="current-year"></span> Synaptech | AI Automation &amp; Business Intelligence | Matheus O. Malaquias</p>
   </footer>
 
 </body>
