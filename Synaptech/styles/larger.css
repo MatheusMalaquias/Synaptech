@@ -1,322 +1,112 @@
-/* ══════════════════════════════════════════
-   SYNAPTECH — Responsive (larger.css)
-   Mobile-first corrections
-   ══════════════════════════════════════════ */
+/* ── RESPONSIVE OVERRIDES ── */
 
-/* ── 768px and below (tablets & phones) ── */
+/* Nav open (mobile) */
 @media (max-width: 768px) {
+    header {
+        flex-wrap: wrap;
+        padding: 1rem 1.5rem;
+    }
 
-  /* HEADER */
-  header {
-    flex-wrap: wrap;
-    padding: 1rem 1.25rem;
-    gap: .5rem;
-  }
+    .hamburger {
+        display: block;
+    }
 
-  .hamburger {
-    display: block;
-  }
+    nav {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.35s ease;
+    }
 
-  nav {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.35s ease;
-  }
+    nav ul {
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+    }
 
-  nav.open {
-    max-height: 360px;
-  }
+    nav ul.open {
+        display: flex;
+    }
 
-  nav ul {
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
-  }
+    nav a {
+        display: block;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+        width: 100%;
+    }
 
-  nav a {
-    display: block;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border-color);
-    width: 100%;
-    font-size: .9rem;
-  }
+    nav a::after { display: none; }
 
-  nav a::after { display: none; }
+    nav.open {
+        max-height: 300px;
+    }
 
-  /* Lang button inside open nav on mobile */
-  .lang-btn {
-    margin: .75rem 0 .5rem;
-    width: 100%;
-    text-align: left;
-    padding: .6rem 0;
-    border: none;
-    border-radius: 0;
-    border-top: 1px solid var(--border-color);
-    font-size: .85rem;
-  }
+    .lang-btn {
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
 
-  /* MAIN */
-  main { padding: 1.25rem 1rem; }
+    main { padding: 1.25rem; }
 
-  /* HERO */
-  .hero {
-    padding: 3rem 1.25rem 2.5rem;
-  }
+    .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
 
-  .hero-text h2 {
-    font-size: 1.65rem;
-    line-height: 1.12;
-  }
+    .modalities-grid {
+        grid-template-columns: 1fr;
+    }
 
-  .hero-text p {
-    font-size: .92rem;
-  }
+    .mission-vision {
+        flex-direction: column;
+    }
 
-  .hero-cta-group {
-    flex-direction: column;
-    align-items: stretch;
-    gap: .65rem;
-  }
+    .page-hero { padding: 2.5rem 1.25rem 2rem; }
 
-  .cta-button,
-  .cta-secondary {
-    text-align: center;
-    width: 100%;
-  }
+    .second-mind {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+    .second-mind-copy {
+        padding: 2rem 1.5rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .second-mind-canvas-wrap {
+        height: 300px;
+        position: relative;
+    }
 
-  /* STATS BAR — 2 col, labels curtos */
-  .stats-bar {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .ai-teaser-section {
+        grid-template-columns: 1fr;
+    }
+    .ai-teaser-demo {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+    }
 
-  .stat-item {
-    padding: 1.25rem .75rem;
-  }
+    .hero { padding: 3.5rem 1.25rem 3rem; }
 
-  .stat-number {
-    font-size: 1.6rem;
-  }
+    .hero-text h2 { font-size: 1.9rem; }
 
-  .stat-label {
-    font-size: .62rem;
-    line-height: 1.4;
-  }
-
-  /* ABOUT */
-  .about {
-    padding: 1.75rem 1.25rem;
-  }
-
-  .about h2 {
-    font-size: 1.4rem;
-  }
-
-  /* MISSION & VISION */
-  .mission-vision {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  /* SECOND MIND — stack vertically */
-  .second-mind {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-
-  .second-mind-copy {
-    padding: 1.75rem 1.25rem;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .second-mind-copy h2 {
-    font-size: 1.4rem;
-  }
-
-  .second-mind-canvas-wrap {
-    height: 260px;
-    position: relative;
-  }
-
-  .mind-stats {
-    gap: 1rem;
-    padding: .4rem 1rem;
-  }
-
-  /* PROJECTS */
-  .projects-header h2 {
-    font-size: 1.4rem;
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  /* SERVICES (modalities) */
-  .modalities-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .featured-tools h2 {
-    font-size: 1.4rem;
-  }
-
-  /* AI CHAT TEASER — stack vertically */
-  .ai-teaser-section {
-    grid-template-columns: 1fr;
-  }
-
-  .ai-teaser-copy {
-    padding: 1.75rem 1.25rem;
-  }
-
-  .ai-teaser-copy h2 {
-    font-size: 1.3rem;
-  }
-
-  .ai-teaser-demo {
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    padding: 1.25rem;
-    min-height: 280px;
-  }
-
-  /* TOOLS STRIP */
-  .tools-strip {
-    padding: 1.25rem 1rem;
-  }
-
-  .tools-logos {
-    gap: .75rem 1.25rem;
-  }
-
-  .tools-logos img {
-    height: 24px;
-  }
-
-  /* PAGE HERO (solutions / contact) */
-  .page-hero {
-    padding: 2.75rem 1.25rem 2.25rem;
-  }
-
-  .page-hero-text h2 {
-    font-size: 1.5rem;
-  }
-
-  .page-hero-text p {
-    font-size: .9rem;
-  }
-
-  /* CONTACT FORM */
-  .contact-form-section {
-    padding: 1.5rem 1.25rem;
-  }
-
-  fieldset {
-    padding: 1.25rem 1rem;
-  }
-
-  /* THANK YOU */
-  .thankyou-hero {
-    padding: 3.5rem 1.25rem;
-    min-height: 360px;
-  }
-
-  .thankyou-content h2 {
-    font-size: 1.6rem;
-  }
-
-  /* MODAL */
-  dialog {
-    width: 95%;
-    margin: 1rem auto;
-  }
-
+    .hero-cta-group { flex-direction: column; align-items: center; }
 }
 
-/* ── 480px and below (small phones) ── */
 @media (max-width: 480px) {
-
-  main { padding: 1rem .875rem; }
-
-  .hero {
-    padding: 2.5rem 1rem 2rem;
-  }
-
-  .hero-text h2 {
-    font-size: 1.45rem;
-  }
-
-  /* Stats — still 2 col but tighter */
-  .stat-number {
-    font-size: 1.4rem;
-  }
-
-  .stat-label {
-    font-size: .58rem;
-  }
-
-  /* Second mind canvas shorter on tiny screens */
-  .second-mind-canvas-wrap {
-    height: 220px;
-  }
-
-  .mind-stats {
-    gap: .75rem;
-    padding: .35rem .75rem;
-    font-size: .55rem;
-  }
-
-  .mind-stat-val {
-    font-size: .9rem;
-  }
-
-  /* Project cards tighter */
-  .project-card__header {
-    padding: 1rem;
-  }
-
-  .project-card__body {
-    padding: 1rem;
-  }
-
-  .project-card__name {
-    font-size: 1.1rem;
-  }
-
-  /* Mission/vision cards tighter */
-  .mission-card,
-  .vision-card {
-    padding: 1.5rem 1.25rem;
-  }
-
-  /* Page hero tighter */
-  .page-hero {
-    padding: 2.25rem 1rem 1.75rem;
-  }
-
-  .page-hero-text h2 {
-    font-size: 1.3rem;
-  }
-
-  /* About tighter */
-  .about {
-    padding: 1.5rem 1rem;
-  }
-
-  /* Featured tools */
-  .featured-tools {
-    padding: 1.5rem 1rem;
-  }
-
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .stat-number { font-size: 1.7rem; }
 }
 
 /* ── Wide screens ── */
 @media (min-width: 1400px) {
-  main { padding: 2.5rem 3rem; }
+    main { padding: 2.5rem 3rem; }
+}
+
+/* ── Projects grid mobile ── */
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
 }
