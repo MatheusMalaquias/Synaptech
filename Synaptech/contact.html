@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact - Synaptech</title>
-  <meta name="description" content="Contact Synaptech to discuss AI automation, system integrations, business intelligence, and operational solutions for your company.">
+  <title>Contact — Synaptech</title>
+  <meta name="description" content="Tell us what your team does manually every day. We'll come back with a concrete automation proposal.">
   <meta name="author" content="Matheus O. Malaquias">
   <link rel="icon" href="images/synaptech.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,15 +13,16 @@
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="stylesheet" href="styles/larger.css">
   <script src="scripts/main.js" defer></script>
+  <script src="scripts/graph.js" defer></script>
 </head>
 <body>
 
   <header>
     <a href="index.html" class="logo">
       <img src="./images/synaptech.png" alt="Synaptech Logo" width="50" height="50">
-      <h1>Synaptech</h1>
+      <h1 class="logo-text">Synaptech</h1>
     </a>
-    <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
+    <button id="menu-button" class="hamburger" aria-label="Open navigation menu"><span></span></button>
     <nav>
       <ul id="nav-menu">
         <li><a href="index.html" data-i18n="nav_home">Home</a></li>
@@ -34,21 +35,21 @@
 
   <main>
 
-    <section class="page-title">
-      <h2 data-i18n="contact_page_title">Let's Discuss Your Business Goals</h2>
-      <p data-i18n="contact_page_desc">Whether you're looking to automate workflows, improve customer support,
-         integrate business systems, or gain better insights from your data,
-         Synaptech can help.</p>
+    <!-- ── PAGE HERO ── -->
+    <section class="page-hero" data-graph-section>
+      <canvas id="page-hero-canvas" aria-hidden="true"></canvas>
+      <div class="page-hero-text">
+        <h2 data-i18n="con_title">Let's Talk About Your Operation</h2>
+        <p data-i18n="con_desc">Tell us what your team is spending time on that a machine should be doing instead. We'll come back with a concrete proposal.</p>
+      </div>
     </section>
 
+    <!-- ── CONTACT FORM ── -->
     <section class="contact-form-section">
       <form action="thankyou.html" method="get">
 
         <fieldset>
           <legend data-i18n="form_legend1">Your Information</legend>
-
-          <label for="company" data-i18n="form_company">Company Name</label>
-          <input type="text" id="company" name="company" data-i18n="form_company" placeholder="Acme Corp">
 
           <label for="fullName" data-i18n="form_name">Full Name *</label>
           <input type="text" id="fullName" name="fullName" required placeholder="Jane Smith">
@@ -56,32 +57,33 @@
           <label for="email" data-i18n="form_email">Email *</label>
           <input type="email" id="email" name="email" required placeholder="jane@example.com">
 
-          <label for="phone" data-i18n="form_phone">Phone Number</label>
-          <input type="tel" id="phone" name="phone" placeholder="123-456-7890">
+          <label for="company" data-i18n="form_company">Company Name</label>
+          <input type="text" id="company" name="company" placeholder="Acme Corp">
+
+          <label for="phone" data-i18n="form_phone">Phone / WhatsApp</label>
+          <input type="tel" id="phone" name="phone" placeholder="+55 11 99999-9999">
         </fieldset>
 
         <fieldset>
-          <legend data-i18n="form_legend2">Your Message</legend>
+          <legend data-i18n="form_legend2">Your Challenge</legend>
 
-          <label for="interest" data-i18n="form_interest">I'm interested in…</label>
+          <label for="interest" data-i18n="form_int">Which solution interests you most?</label>
           <select id="interest" name="interest">
-            <option value="" disabled selected data-i18n="form_select">Select a Service</option>
-            <option value="ai-agents" data-i18n="form_opt1">AI Agents</option>
-            <option value="workflow-automation" data-i18n="form_opt2">Workflow Automation</option>
-            <option value="system-integrations" data-i18n="form_opt3">System Integrations</option>
-            <option value="data-intelligence" data-i18n="form_opt4">Data Intelligence</option>
-            <option value="customer-support" data-i18n="form_opt5">Customer Support Automation</option>
-            <option value="sales-optimization" data-i18n="form_opt6">Sales Process Optimization</option>
-            <option value="consultation" data-i18n="form_opt7">General Consultation</option>
+            <option value="" disabled selected data-i18n="form_sel">Select one</option>
+            <option value="salessync"  data-i18n="f1">SalesSync — Sales Note Automation</option>
+            <option value="clinicbot"  data-i18n="f2">ClinicBot — WhatsApp Agent for Clinics</option>
+            <option value="fieldbot"   data-i18n="f3">FieldBot — Technical Visit Scheduling</option>
+            <option value="other"      data-i18n="f4">Something else — I'll describe below</option>
           </select>
 
-          <label for="message" data-i18n="form_message">Tell us about your business needs *</label>
+          <label for="message" data-i18n="form_msg">What does your team do manually today that you'd like to automate? *</label>
           <textarea id="message" name="message" rows="6" required
-            data-i18n="form_placeholder"
-            placeholder="Describe your current challenges, goals, or processes you would like to automate."></textarea>
+            data-i18n-placeholder="form_ph"
+            placeholder="Example: every time we close a sale, someone has to manually enter the data in our system. It takes 15 minutes per sale and we close 20 a day."></textarea>
         </fieldset>
 
-        <button type="submit" class="cta-button" data-i18n="form_submit">Request Consultation</button>
+        <button type="submit" class="cta-button" data-i18n="form_sub">Send Message</button>
+
       </form>
     </section>
 

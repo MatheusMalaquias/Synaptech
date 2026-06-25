@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solutions - Synaptech</title>
-  <meta name="description" content="Explore Synaptech's AI automation, workflow, integration, and data intelligence solutions.">
+  <title>Solutions — Synaptech</title>
+  <meta name="description" content="SalesSync, ClinicBot, FieldBot — three AI automation systems built for real operational problems. Ready to deploy in days.">
   <meta name="author" content="Matheus O. Malaquias">
   <link rel="icon" href="images/synaptech.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,15 +13,16 @@
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="stylesheet" href="styles/larger.css">
   <script src="scripts/main.js" defer></script>
+  <script src="scripts/graph.js" defer></script>
 </head>
 <body id="modalities-page">
 
   <header>
     <a href="index.html" class="logo">
       <img src="./images/synaptech.png" alt="Synaptech Logo" width="50" height="50">
-      <h1>Synaptech</h1>
+      <h1 class="logo-text">Synaptech</h1>
     </a>
-    <button id="menu-button" class="hamburger" aria-label="Open navigation menu"></button>
+    <button id="menu-button" class="hamburger" aria-label="Open navigation menu"><span></span></button>
     <nav>
       <ul id="nav-menu">
         <li><a href="index.html" data-i18n="nav_home">Home</a></li>
@@ -34,30 +35,92 @@
 
   <main>
 
-    <section class="page-title">
-      <h2 data-i18n="solutions_page_title">Our Solutions</h2>
-      <p data-i18n="solutions_page_desc">Explore the automation, AI, integration, and business intelligence
-         solutions offered by Synaptech. Click any card to learn more.</p>
+    <!-- ── PAGE HERO ── -->
+    <section class="page-hero" data-graph-section>
+      <canvas id="page-hero-canvas" aria-hidden="true"></canvas>
+      <div class="page-hero-text">
+        <h2 data-i18n="sol_hero_title">Our Solutions</h2>
+        <p data-i18n="sol_hero_sub">Three systems. Three real problems solved. Each one ready to adapt to your business in days, not months.</p>
+      </div>
     </section>
 
-    <div id="class-schedule-container" class="schedule-grid"></div>
+    <!-- ── PROJECTS GRID ── -->
+    <section class="projects-section">
+      <div class="projects-grid">
+
+        <!-- SalesSync -->
+        <article class="project-card project-card--violet">
+          <div class="project-card__header">
+            <div class="project-card__icon">📊</div>
+            <div>
+              <div class="project-card__tag" data-i18n="p1_tag">Sales Operations</div>
+              <div class="project-card__name">SalesSync</div>
+            </div>
+          </div>
+          <div class="project-card__body">
+            <h3 data-i18n="p1_headline">Automatic Sales Note Entry — No More Manual Typing</h3>
+            <p data-i18n="p1_desc">Every time a sale is closed, SalesSync automatically registers the sales note in your system — pulling data from the sale, filling in the fields, and confirming the entry. Your team stops touching a keyboard and starts closing more deals.</p>
+            <div class="project-card__result">
+              <span class="project-card__dot project-card__dot--violet"></span>
+              <span data-i18n="p1_result">Eliminates manual data entry after every sale</span>
+            </div>
+            <div class="project-card__tech" data-i18n="p1_tech">n8n · CRM Integration · Custom API</div>
+          </div>
+        </article>
+
+        <!-- ClinicBot -->
+        <article class="project-card project-card--cyan">
+          <div class="project-card__header">
+            <div class="project-card__icon">🏥</div>
+            <div>
+              <div class="project-card__tag" data-i18n="p2_tag">Healthcare</div>
+              <div class="project-card__name project-card__name--cyan">ClinicBot</div>
+            </div>
+          </div>
+          <div class="project-card__body">
+            <h3 data-i18n="p2_headline">Intelligent WhatsApp Agent for Clinics — No Receptionist Needed After Hours</h3>
+            <p data-i18n="p2_desc">ClinicBot answers patients on WhatsApp at any hour — confirming appointments, collecting symptoms, sending reminders, and escalating to a human when needed. Your clinic is always available, even when your team isn't.</p>
+            <div class="project-card__result">
+              <span class="project-card__dot project-card__dot--cyan"></span>
+              <span data-i18n="p2_result">Handles scheduling and patient triage automatically</span>
+            </div>
+            <div class="project-card__tech" data-i18n="p2_tech">WhatsApp API · Claude AI · n8n</div>
+          </div>
+        </article>
+
+        <!-- FieldBot -->
+        <article class="project-card project-card--green">
+          <div class="project-card__header">
+            <div class="project-card__icon">🔧</div>
+            <div>
+              <div class="project-card__tag" data-i18n="p3_tag">Field Services</div>
+              <div class="project-card__name project-card__name--green">FieldBot</div>
+            </div>
+          </div>
+          <div class="project-card__body">
+            <h3 data-i18n="p3_headline">Technical Visit Scheduling via WhatsApp — From Request to Calendar in Minutes</h3>
+            <p data-i18n="p3_desc">FieldBot receives a visit request on WhatsApp, qualifies the service type, checks technician availability, and confirms the appointment — all automatically. Your operations team sees a filled calendar without a single phone call.</p>
+            <div class="project-card__result">
+              <span class="project-card__dot project-card__dot--green"></span>
+              <span data-i18n="p3_result">Schedules field visits with zero manual coordination</span>
+            </div>
+            <div class="project-card__tech" data-i18n="p3_tech">WhatsApp API · Claude AI · n8n · Calendar Integration</div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── CTA BOTTOM ── -->
+    <section class="about fade-in" style="text-align:center">
+      <h2 data-i18n="sol_cta_title">Don't See Exactly What You Need?</h2>
+      <p data-i18n="sol_cta_desc">We don't start with a tool and look for a problem to apply it to. Tell us what your team does manually every day, and we'll build the right solution for it.</p>
+      <div style="margin-top:1.5rem">
+        <a href="contact.html" class="cta-button" data-i18n="hero_cta">Talk to Us</a>
+      </div>
+    </section>
 
   </main>
-
-  <!-- MODAL -->
-  <dialog id="class-details-modal" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-content">
-      <button id="modal-close-button" aria-label="Close">&times;</button>
-      <img id="modal-img" src="images/synaptech.png" alt="">
-      <h3 id="modal-title">Select a solution</h3>
-      <p><strong data-i18n="modal_impact">Business Impact:</strong> <span id="modal-business-impact"></span></p>
-      <p><strong data-i18n="modal_rating">Rating:</strong> <span id="modal-rating"></span></p>
-      <p><strong data-i18n="modal_industry">Industry:</strong> <span id="modal-industry"></span></p>
-      <p><strong data-i18n="modal_technology">Technology:</strong> <span id="modal-technology"></span></p>
-      <p><strong data-i18n="modal_benefit">Benefit:</strong> <span id="modal-benefit"></span></p>
-      <p id="modal-description"></p>
-    </div>
-  </dialog>
 
   <footer>
     <p>&copy; <span id="current-year"></span> Synaptech | AI Automation &amp; Business Intelligence | Matheus O. Malaquias</p>
