@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synaptech — Automatizamos o Trabalho Que Sua Equipe Não Deveria Estar Fazendo</title>
+  <meta name="description" content="Agentes de WhatsApp, automações de processo e integrações inteligentes — construídos para o seu negócio em dias, não meses.">
+  <meta name="author" content="Matheus O. Malaquias">
+
+  <!-- Open Graph (Meta Ads) -->
+  <meta property="og:title" content="Synaptech — Automatizamos o Trabalho Manual do Seu Negócio">
+  <meta property="og:description" content="Agentes de WhatsApp, automações e integrações inteligentes. Proposta gratuita em até 1 dia útil.">
+  <meta property="og:type" content="website">
+
+  <!-- ══════════════════════════════════════
+       META PIXEL — Cole seu ID aqui
+       ══════════════════════════════════════
+  <script>
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'SEU_PIXEL_ID_AQUI');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1"/>
+  </noscript>
+  -->
+
+  <link rel="icon" href="images/synaptech.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="lp-header">
+    <a href="#" class="logo">
+      <img src="images/synaptech.png" alt="Synaptech" width="36" height="36">
+      <span class="logo-text">SYNAPTECH</span>
+    </a>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">🇧🇷 PT</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">🇺🇸 EN</button>
+    </div>
+  </header>
+
+  <main class="lp-main">
+
+    <!-- ── 1. HERO ── -->
+    <section class="hero-section">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          <span data-i18n="eyebrow">Automação com IA · Para Negócios Reais</span>
+        </div>
+        <h1 data-i18n="hero_title">
+          Automatizamos o trabalho<br>que sua equipe<br>
+          <span class="gradient-text">não deveria estar fazendo</span>
+        </h1>
+        <p data-i18n="hero_desc">
+          Agentes de WhatsApp, automações de processo e integrações inteligentes —
+          construídos para o seu negócio em dias, não meses.
+        </p>
+        <div class="hero-ctas">
+          <a href="#formulario-topo" class="btn-primary" data-i18n="hero_cta">Quero uma Proposta Gratuita</a>
+          <a href="#solucoes" class="btn-ghost" data-i18n="hero_cta2">Ver Soluções</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 2. FORMULÁRIO TOPO ── -->
+    <section class="form-section" id="formulario-topo">
+      <div class="form-grid">
+        <div class="form-copy">
+          <div class="eyebrow">
+            <span class="eyebrow-dot green"></span>
+            <span data-i18n="form_badge">Proposta Gratuita</span>
+          </div>
+          <h2 data-i18n="form_top_title">Fale com a gente agora</h2>
+          <p data-i18n="form_top_desc">
+            Conta em qual processo sua equipe perde mais tempo. A gente volta com
+            uma proposta concreta em até 1 dia útil — sem custo, sem compromisso.
+          </p>
+          <ul class="check-list">
+            <li data-i18n="check1">Sem compromisso</li>
+            <li data-i18n="check2">Proposta personalizada</li>
+            <li data-i18n="check3">Resposta em até 1 dia útil</li>
+          </ul>
+        </div>
+        <div class="form-box">
+          <form class="lead-form" id="form-top" onsubmit="submitForm(event, 'top')">
+            <div class="field">
+              <label data-i18n="field_name">Nome *</label>
+              <input type="text" name="nome" required placeholder="Seu nome" data-i18n-ph="ph_name">
+            </div>
+            <div class="field">
+              <label data-i18n="field_wpp">WhatsApp *</label>
+              <input type="tel" name="whatsapp" required placeholder="+55 11 99999-9999">
+            </div>
+            <div class="field">
+              <label data-i18n="field_need">O que você precisa? *</label>
+              <select name="solucao" required class="select-field">
+                <option value="" disabled selected data-i18n="sel_placeholder">Selecione o tipo de solução</option>
+                <option value="whatsapp"   data-i18n="opt1">🤖 Agente de WhatsApp — quero automatizar atendimento</option>
+                <option value="automacao"  data-i18n="opt2">⚙️ Automação de processo — tenho uma tarefa repetitiva</option>
+                <option value="integracao" data-i18n="opt3">🔗 Integração de sistemas — quero conectar ferramentas</option>
+                <option value="dados"      data-i18n="opt4">📊 Inteligência de dados — quero entender meus números</option>
+                <option value="outro"      data-i18n="opt5">💡 Não sei ainda — quero conversar e descobrir</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary full" data-i18n="form_btn">Quero uma Proposta Gratuita</button>
+            <p class="form-disclaimer" data-i18n="form_disclaimer">Sem spam. Respondemos em até 1 dia útil.</p>
+          </form>
+          <div class="form-success" id="success-top" style="display:none">
+            <div class="success-icon">✅</div>
+            <h3 data-i18n="success_title">Mensagem Recebida!</h3>
+            <p data-i18n="success_desc">Retornamos com uma proposta em até 1 dia útil.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 3. PROBLEMA ── -->
+    <section class="problem-section">
+      <div class="section-header">
+        <h2 data-i18n="prob_title">Você se identifica com isso?</h2>
+        <p data-i18n="prob_sub">Se sim, existe uma automação que resolve — e pode estar rodando na sua empresa em dias.</p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-icon">📋</div>
+          <h3 data-i18n="prob1_title">Sua equipe ainda lança dados manualmente?</h3>
+          <p data-i18n="prob1_desc">Cada venda gera minutos de digitação repetitiva. Multiplica por 20 vendas por dia — são horas perdidas todo mês.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📱</div>
+          <h3 data-i18n="prob2_title">Seu atendimento para quando a equipe vai embora?</h3>
+          <p data-i18n="prob2_desc">Clientes mandam mensagem à noite e no fim de semana. Sem resposta, escolhem o concorrente.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📅</div>
+          <h3 data-i18n="prob3_title">Sua agenda de visitas depende de ligação?</h3>
+          <p data-i18n="prob3_desc">Cada visita técnica exige uma rodada de ligações para confirmar. Um agente faz isso em 3 minutos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 4. SOLUÇÕES ── -->
+    <section class="solutions-section" id="solucoes">
+      <div class="section-header">
+        <h2 data-i18n="sol_title">Nossas Soluções</h2>
+        <p data-i18n="sol_sub">Três sistemas prontos para implantar — e a possibilidade de construir o seu do zero.</p>
+      </div>
+      <div class="solutions-grid">
+
+        <article class="sol-card sol-violet">
+          <div class="sol-card__header">
+            <div class="sol-card__icon">📊</div>
+            <div>
+              <div class="sol-card__tag" data-i18n="p1_tag">Operações de Venda</div>
+              <div class="sol-card__name violet" >SalesSync</div>
+            </div>
+          </div>
+          <div class="sol-card__body">
+            <h3 data-i18n="p1_headline">Lançamento automático de notas de venda</h3>
+            <p data-i18n="p1_desc">A cada venda fechada, o SalesSync registra automaticamente no seu sistema. Sua equipe para de digitar e começa a vender mais.</p>
+            <div class="sol-card__result">
+              <span class="result-dot violet"></span>
+              <span data-i18n="p1_result">−15min por venda</span>
+            </div>
+            <div class="sol-card__tech">n8n · CRM · API</div>
+          </div>
+        </article>
+
+        <article class="sol-card sol-cyan">
+          <div class="sol-card__header">
+            <div class="sol-card__icon">🏥</div>
+            <div>
+              <div class="sol-card__tag" data-i18n="p2_tag">Saúde</div>
+              <div class="sol-card__name cyan">ClinicBot</div>
+            </div>
+          </div>
+          <div class="sol-card__body">
+            <h3 data-i18n="p2_headline">Agente inteligente no WhatsApp para clínicas</h3>
+            <p data-i18n="p2_desc">Atende pacientes 24/7, confirma consultas, envia lembretes e escala para humano quando necessário.</p>
+            <div class="sol-card__result">
+              <span class="result-dot cyan"></span>
+              <span data-i18n="p2_result">24/7 sem recepcionista</span>
+            </div>
+            <div class="sol-card__tech">WhatsApp API · Claude AI · n8n</div>
+          </div>
+        </article>
+
+        <article class="sol-card sol-green">
+          <div class="sol-card__header">
+            <div class="sol-card__icon">🔧</div>
+            <div>
+              <div class="sol-card__tag" data-i18n="p3_tag">Serviços em Campo</div>
+              <div class="sol-card__name green">FieldBot</div>
+            </div>
+          </div>
+          <div class="sol-card__body">
+            <h3 data-i18n="p3_headline">Agendamento de visitas técnicas pelo WhatsApp</h3>
+            <p data-i18n="p3_desc">Recebe o pedido, qualifica o serviço, verifica disponibilidade e confirma o agendamento. Tudo automaticamente.</p>
+            <div class="sol-card__result">
+              <span class="result-dot green"></span>
+              <span data-i18n="p3_result">3min do pedido ao calendário</span>
+            </div>
+            <div class="sol-card__tech">WhatsApp API · Claude AI · n8n</div>
+          </div>
+        </article>
+
+        <article class="sol-card sol-custom">
+          <div class="sol-card__header">
+            <div class="sol-card__icon">💡</div>
+            <div>
+              <div class="sol-card__tag" data-i18n="p4_tag">Sob Medida</div>
+              <div class="sol-card__name violet" data-i18n="p4_name">O Seu Projeto</div>
+            </div>
+          </div>
+          <div class="sol-card__body">
+            <h3 data-i18n="p4_headline">Tem outro problema para resolver?</h3>
+            <p data-i18n="p4_desc">Esses são exemplos do que já construímos. Se a sua necessidade é diferente, a gente projeta uma solução do zero para o seu processo.</p>
+            <a href="#formulario-final" class="btn-primary" style="margin-top:auto;text-align:center" data-i18n="p4_cta">Vamos Conversar</a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── 5. SEGUNDA MENTE ── -->
+    <section class="mind-section">
+      <div class="mind-copy">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          <span data-i18n="mind_eyebrow">Rede Neural · Processando</span>
+        </div>
+        <h2 data-i18n="mind_title">Uma segunda mente trabalhando por você</h2>
+        <p data-i18n="mind_desc">
+          Enquanto sua equipe foca em estratégia, nossa IA roda em segundo plano —
+          qualificando leads, respondendo clientes e atualizando seus sistemas.
+        </p>
+        <a href="#formulario-topo" class="btn-primary" data-i18n="mind_cta">Quero isso no meu negócio</a>
+      </div>
+      <div class="mind-canvas-wrap">
+        <canvas id="mind-canvas" aria-hidden="true"></canvas>
+        <div class="mind-counters">
+          <div class="mind-counter">
+            <span class="counter-val" id="cnt-connections">0</span>
+            <span class="counter-lbl" data-i18n="cnt1">conexões</span>
+          </div>
+          <div class="mind-counter">
+            <span class="counter-val" id="cnt-signals">0</span>
+            <span class="counter-lbl" data-i18n="cnt2">sinais/s</span>
+          </div>
+          <div class="mind-counter">
+            <span class="counter-val" id="cnt-nodes">0</span>
+            <span class="counter-lbl" data-i18n="cnt3">nós ativos</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 6. CHAT DEMO ── -->
+    <section class="chat-section">
+      <div class="chat-copy">
+        <h2 data-i18n="chat_title">Veja funcionando</h2>
+        <p data-i18n="chat_desc">
+          Uma conversa real com o ClinicBot. O paciente agenda, recebe confirmação,
+          e seu sistema é atualizado — sem ninguém da sua equipe tocar em nada.
+        </p>
+        <ul class="check-list">
+          <li data-i18n="chat_c1">Atendimento 24h, 7 dias por semana</li>
+          <li data-i18n="chat_c2">Confirmação automática de consultas</li>
+          <li data-i18n="chat_c3">Lembrete enviado 24h antes</li>
+          <li data-i18n="chat_c4">Escalada para humano quando necessário</li>
+        </ul>
+      </div>
+      <div class="chat-demo">
+        <div class="chat-window">
+          <div class="chat-header">
+            <span class="status-dot"></span>
+            <span data-i18n="chat_hdr">ClinicBot · Online</span>
+          </div>
+          <div class="chat-body" id="chat-body">
+            <div class="msg msg--user" data-i18n="msg1">Oi! Quero marcar consulta com o Dr. Silva.</div>
+            <div class="msg msg--ai" data-i18n="msg2">Dr. Silva tem disponibilidade quinta às 14h ou sexta às 10h. Qual prefere?</div>
+            <div class="msg msg--user" data-i18n="msg3">Quinta às 14h!</div>
+            <div class="typing-indicator" id="typing">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 7. POR QUE SYNAPTECH ── -->
+    <section class="reasons-section">
+      <div class="section-header">
+        <h2 data-i18n="why_title">Por que a Synaptech?</h2>
+        <p data-i18n="why_sub">Não começamos com uma ferramenta. Começamos pelo seu problema.</p>
+      </div>
+      <div class="reasons-grid">
+        <div class="reason-card">
+          <div class="reason-icon">⚡</div>
+          <h3 data-i18n="r1_title">Rápido de implementar</h3>
+          <p data-i18n="r1_desc">Dias para entrar em produção, não meses. Sem burocracia de grandes projetos de TI.</p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-icon">🔒</div>
+          <h3 data-i18n="r2_title">Tudo seu</h3>
+          <p data-i18n="r2_desc">O sistema entregue é seu — documentado e sem dependência de fornecedor.</p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-icon">🎯</div>
+          <h3 data-i18n="r3_title">Feito para o seu negócio</h3>
+          <p data-i18n="r3_desc">Nada genérico. Cada solução é adaptada ao seu processo, não o contrário.</p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-icon">🤝</div>
+          <h3 data-i18n="r4_title">Suporte real</h3>
+          <p data-i18n="r4_desc">Você fala com quem construiu. Sem call center, sem ticket number.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 8. FORMULÁRIO FINAL ── -->
+    <section class="form-section" id="formulario-final">
+      <div class="form-grid">
+        <div class="form-copy">
+          <div class="eyebrow">
+            <span class="eyebrow-dot green"></span>
+            <span data-i18n="form_badge">Proposta Gratuita</span>
+          </div>
+          <h2 data-i18n="form_bottom_title">Pronto para automatizar?</h2>
+          <p data-i18n="form_bottom_desc">
+            Você já viu o que é possível. Agora é só dar o primeiro passo —
+            sem burocracia, sem compromisso. A gente analisa e volta com uma
+            proposta feita para o seu negócio.
+          </p>
+          <ul class="check-list">
+            <li data-i18n="check1">Sem compromisso</li>
+            <li data-i18n="check2">Proposta personalizada</li>
+            <li data-i18n="check3">Resposta em até 1 dia útil</li>
+          </ul>
+        </div>
+        <div class="form-box">
+          <form class="lead-form" id="form-bottom" onsubmit="submitForm(event, 'bottom')">
+            <div class="field">
+              <label data-i18n="field_name">Nome *</label>
+              <input type="text" name="nome" required placeholder="Seu nome" data-i18n-ph="ph_name">
+            </div>
+            <div class="field">
+              <label data-i18n="field_wpp">WhatsApp *</label>
+              <input type="tel" name="whatsapp" required placeholder="+55 11 99999-9999">
+            </div>
+            <div class="field">
+              <label data-i18n="field_need">O que você precisa? *</label>
+              <select name="solucao" required class="select-field">
+                <option value="" disabled selected data-i18n="sel_placeholder">Selecione o tipo de solução</option>
+                <option value="whatsapp"   data-i18n="opt1">🤖 Agente de WhatsApp — quero automatizar atendimento</option>
+                <option value="automacao"  data-i18n="opt2">⚙️ Automação de processo — tenho uma tarefa repetitiva</option>
+                <option value="integracao" data-i18n="opt3">🔗 Integração de sistemas — quero conectar ferramentas</option>
+                <option value="dados"      data-i18n="opt4">📊 Inteligência de dados — quero entender meus números</option>
+                <option value="outro"      data-i18n="opt5">💡 Não sei ainda — quero conversar e descobrir</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary full" data-i18n="form_btn">Quero uma Proposta Gratuita</button>
+            <p class="form-disclaimer" data-i18n="form_disclaimer">Sem spam. Respondemos em até 1 dia útil.</p>
+          </form>
+          <div class="form-success" id="success-bottom" style="display:none">
+            <div class="success-icon">✅</div>
+            <h3 data-i18n="success_title">Mensagem Recebida!</h3>
+            <p data-i18n="success_desc">Retornamos com uma proposta em até 1 dia útil.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="lp-footer">
+    <p>© <span id="footer-year"></span> Synaptech | AI Automation & Business Intelligence | Matheus O. Malaquias</p>
+  </footer>
+
+  <script src="landing.js"></script>
+</body>
+</html>
