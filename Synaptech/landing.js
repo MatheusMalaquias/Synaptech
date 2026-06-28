@@ -184,54 +184,69 @@ let currentLang = 'pt';
 function setLang(lang) {
   currentLang = lang;
   const t = T[lang];
-
-  // Update lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
-
-  // Update html lang attr
   document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
-
-  // Apply all data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (t[key] !== undefined) el.textContent = t[key];
   });
-
-  // Apply placeholders
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const key = el.getAttribute('data-i18n-ph');
     if (t[key] !== undefined) el.placeholder = t[key];
   });
-
-  // Update chat messages in DOM
   updateChat(lang);
 }
 
-// ── Init language ──
 setLang('pt');
 
 // ══════════════════════════════════════════
-// FORM HANDLING
+// FORM HANDLING — conectado ao n8n
 // ══════════════════════════════════════════
-function submitForm(e, formId) {
+const WEBHOOK_URL = 'https://n8n-yvdu.srv1552695.hstgr.cloud/webhook/synaptech';
+
+async function submitForm(e, formId) {
   e.preventDefault();
-  const form = document.getElementById('form-' + formId);
+  const form    = document.getElementById('form-' + formId);
   const success = document.getElementById('success-' + formId);
+  const btn     = form.querySelector('button[type="submit"]');
 
-  // Simple validation
-  const nome = form.querySelector('[name="nome"]').value.trim();
-  const wpp  = form.querySelector('[name="whatsapp"]').value.trim();
-  const sol  = form.querySelector('[name="solucao"]').value;
-  if (!nome || !wpp || !sol) return;
+  const nome    = form.querySelector('[name="nome"]').value.trim();
+  const wpp     = form.querySelector('[name="whatsapp"]').value.trim();
+  const solucao = form.querySelector('[name="solucao"]').value;
 
-  // Fire Meta Pixel lead event if available
-  if (typeof fbq !== 'undefined') {
-    fbq('track', 'Lead', { content_name: sol });
+  if (!nome || !wpp || !solucao) return;
+
+  // Feedback visual no botão
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Enviando...';
+  btn.disabled = true;
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome,
+        whatsapp: wpp,
+        solucao,
+        idioma:   currentLang,
+        origem:   'landing_page',
+        data:     new Date().toISOString()
+      })
+    });
+  } catch (err) {
+    // Mesmo com erro de rede, mostra sucesso para o usuário
+    console.warn('Webhook error:', err);
   }
 
-  // Show success
+  // Meta Pixel lead event
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Lead', { content_name: solucao });
+  }
+
+  // Mostra sucesso
   form.style.display = 'none';
   success.style.display = 'flex';
 }
@@ -246,12 +261,10 @@ function updateChat(lang) {
   msgs.forEach((el, i) => { if (keys[i] && t[keys[i]]) el.textContent = t[keys[i]]; });
 }
 
-// Auto-type reply after 2.8s
 setTimeout(() => {
-  const typing = document.getElementById('typing');
+  const typing  = document.getElementById('typing');
   const chatBody = document.getElementById('chat-body');
   if (!typing || !chatBody) return;
-
   typing.remove();
   const reply = document.createElement('div');
   reply.className = 'msg msg--ai';
@@ -300,8 +313,7 @@ function mountCanvas(canvasId, opts) {
 
   const ctx = canvas.getContext('2d');
   const parent = canvas.parentElement;
-  const dimmed = opts.dimmed || false;
-  const as = dimmed ? 0.4 : 1;
+  const as = opts.dimmed ? 0.4 : 1;
   let state, animId;
 
   function resize() {
@@ -318,7 +330,6 @@ function mountCanvas(canvasId, opts) {
     const hd = Math.min(W,H)*.6, sd = Math.min(W,H)*.28;
     let cons = 0;
 
-    // Hub edges
     for (let i=0;i<hubs.length;i++) for (let j=i+1;j<hubs.length;j++) {
       const dx=hubs[i].x-hubs[j].x, dy=hubs[i].y-hubs[j].y, d=Math.sqrt(dx*dx+dy*dy);
       if (d<hd) {
@@ -332,7 +343,6 @@ function mountCanvas(canvasId, opts) {
       }
     }
 
-    // Sat edges
     for (const p of sats) for (const h of hubs) {
       const dx=p.x-h.x, dy=p.y-h.y, d=Math.sqrt(dx*dx+dy*dy);
       if (d<sd) {
@@ -345,7 +355,6 @@ function mountCanvas(canvasId, opts) {
       }
     }
 
-    // Pulses
     const alive = [];
     for (const pu of state.pulses) {
       pu.t+=pu.sp; if(pu.t>=1) continue; alive.push(pu);
@@ -357,7 +366,6 @@ function mountCanvas(canvasId, opts) {
     }
     state.pulses = alive;
 
-    // Nodes
     for (const n of state.nodes) {
       n.pulse+=n.ps; const gw=(Math.sin(n.pulse)+1)/2, c=n.col;
       if (n.hub) {
@@ -387,7 +395,6 @@ function mountCanvas(canvasId, opts) {
       if(n.y<pad||n.y>H-pad) n.vy*=-1;
     }
 
-    // Counters
     state.frame++;
     if (state.frame%45===0) {
       state.ct=cons; state.st=Math.floor(rnd(10,42)); state.nt=state.nodes.length;
@@ -406,7 +413,6 @@ function mountCanvas(canvasId, opts) {
     animId = requestAnimationFrame(draw);
   }
 
-  // Pause when off-screen
   let running = false;
   const io = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting && !running) {
@@ -422,10 +428,7 @@ function mountCanvas(canvasId, opts) {
   resize();
 }
 
-// Mount hero canvas
 mountCanvas('hero-canvas', { hubs: 5, sats: 32, dimmed: false });
-
-// Mount mind canvas with counters
 mountCanvas('mind-canvas', {
   hubs: 6, sats: 30, dimmed: false,
   counters: ['cnt-connections', 'cnt-signals', 'cnt-nodes']
